@@ -10,7 +10,8 @@ function searchLocalDir(e){
 			ncc=crunchNCC(ajax.responseText);
 			document.getElementById("toc").innerHTML=ncc;
 			smiles=extraxtSmilUrls(ncc);
-			fecthSmiles(smiles);
+			fetchSimels(smiles);
+			document.getElementById("loadingMessage").innerText="Sucessfully loaded Ncc";
 		}
 	};
 	ajax.open("GET","NCC.html",true);
@@ -21,7 +22,13 @@ function fetchSimels(){
 	return;
 	}
 function crunchNCC(ncc){
+	ncc=ncc.toLowerCase();
+	ncc=ncc.match(/<body>((:?.|\n)*)<\/body>/)[0];
+	ncc=ncc.replace(/<a(.*)href=".*#(.*)"(.*)>(.*)<\/a>/g,"<div $1onClick=\"play(\'$2\');\"$3>$4</div>")
 	return ncc;
+}
+function play(id){
+	document.getElementById('loadingMessage').innerText="Playing id "+id;
 }
 function crunchSMIL(smil){
 	smil=smil.toLowerCase();

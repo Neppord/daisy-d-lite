@@ -11,6 +11,9 @@ table{
 	background-color : lightgray;
 	
 }
+#toc div{
+	background-color: red;
+}
 .corner{
 	background-repeat: no-repeat;
 }
