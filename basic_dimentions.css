@@ -1,0 +1,46 @@
+/*
+	the basic layout and dimentions 
+*/
+table{
+	border-collapse: collapse;
+}
+td{
+	border: 5pt solid green;
+}
+
+
+#toc{	
+}
+.corner{
+	border: 0pt solid green;
+	width:23px;
+	height:25px;
+}
+.shortside{
+	border: 0pt solid green;
+	height:25px;
+}
+.longside{
+	border: 0pt solid green;
+	width:20px;
+}
+
+.ProgressBar{
+	height:1em;
+	
+}
+.ProgressBar .Bar{
+	/*position:relative;
+	top: 0px;
+	left: 0px;
+	*/margin:0.5em;
+	height: 1em;
+	width: 80%;
+}
+.ProgressBar .Message{
+	position: relative;
+	/*top: -1.5em;
+	left: 0px;
+	*/margin:0.5em;
+	height: 1em;
+}

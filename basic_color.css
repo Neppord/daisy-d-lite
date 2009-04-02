@@ -1,0 +1,36 @@
+/*
+	the basic coloring of the components and imagery
+*/
+body{
+	background-color:lightgreen;
+}
+table{
+	background-color:green;
+}
+#toc{
+	background-color : lightgray;
+	
+}
+.corner{
+	background-repeat: no-repeat;
+}
+.corner[pos="upperleft"]{
+	background-image: url('upperleft.jpg');
+}
+.corner[pos="lowerleft"]{
+	background-image: url('lowerleft.jpg');
+}
+.corner[pos="upperright"]{
+	background-image: url('upperright.jpg');
+}
+.corner[pos="lowerright"]{
+	background-image: url('lowerright.jpg');
+}
+.ProgressBar{
+	background-color : lightgreen;
+}
+.Bar{
+	background-color : green;
+	background-image : url('progress_small.gif');
+	background-repeat: repeat-x;
+}
