@@ -1,9 +1,9 @@
 <html>
 	<head>
 		<title>Daisy(D)Lite</title>
-		<link rel="stylesheet" type="text/css" href="basic_color.css">
-		<link rel="stylesheet" type="text/css" href="basic_dimentions.css">
-		<script rel="javascript" type="text/javascript" src="script.js"></script>
+		<link rel="stylesheet" type="text/css" href="src/basic_color.css">
+		<link rel="stylesheet" type="text/css" href="src/basic_dimentions.css">
+		<script rel="javascript" type="text/javascript" src="src/script.js"></script>
 	</head>
 	<body>
 		<table align="center">
@@ -14,7 +14,7 @@
 			</tr>
 			<tr>
 				<td class="longside"></td>
-				<td id="icon" rowspan=2><img src="Daisypict.jpg"></td>
+				<td id="icon" rowspan=2><img src="src/Daisypict.jpg"></td>
 				<td id="back">Back</td>
 				<td id="play">Play</td>
 				<td id="stop">Stop</td>
@@ -25,8 +25,8 @@
 			<tr height="50 px">
 				<td class="longside"></td>
 				<td class="ProgressBar" colspan=5>
-					<div class="Bar" ></div>
-					<span class="message">In Progress<span>
+					<div id="loadingBar" class="Bar" ></div>
+					<span id="loadingMessage" class="message">In Progress<span>
 				</td>
 				<td class="longside"></td>
 			</tr>
