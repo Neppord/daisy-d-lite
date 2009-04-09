@@ -4,6 +4,9 @@
 body{
 	background-color:lightgreen;
 }
+#smilData{
+	display:none;
+}
 table{
 	background-color:green;
 }
