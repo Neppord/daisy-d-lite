@@ -1,48 +1,27 @@
 /*
 	the basic layout and dimentions 
 */
-table{
-	border-collapse: collapse;
+fieldset{
 }
-td{
-	border: 5pt solid green;
+fieldset div{
 }
-
-
-#toc{	
-	overflow:auto;
-	height: 30em;
-}
-.corner{
-	border: 0pt solid green;
-	width:23px;
-	height:25px;
-}
-.shortside{
-	border: 0pt solid green;
-	height:25px;
-}
-.longside{
-	border: 0pt solid green;
-	width:20px;
+fieldset div div{
+	padding:10pt;
+	display:table-cell;
 }
 
-.ProgressBar{
-	height:1em;
-	
+.progressBar{
+	padding:10pt;
+	width:400pt;
+	border-width:1pt;
+	border-style:solid;
+	display:block;
 }
-.ProgressBar .Bar{
-	/*position:relative;
-	top: 0px;
-	left: 0px;
-	*/margin:0.5em;
-	height: 1em;
-	width: 80%;
+.progressBar .progress{
+	padding:10pt;
+	display:block;
 }
-.ProgressBar .Message{
-	position: relative;
-	/*top: -1.5em;
-	left: 0px;
-	*/margin:0.5em;
-	height: 1em;
+.progressMessage{
+	text-align:center;
+	display:block;
 }

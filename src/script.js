@@ -93,4 +93,4 @@ function extraxtSmilUrls(ncc){
 	ret=ret.filter(function (a,i,t){return t.indexOf(a)==i;});
 	return ret!=null?ret:[];
 }
-addEventListener("load",searchLocalDir,false);
+//addEventListener("load",searchLocalDir,false);

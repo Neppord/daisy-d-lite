@@ -1,48 +1,54 @@
-<html>
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml" lang="en" xml:lang="en">
 	<head>
 		<title>Daisy(D)Lite</title>
-		<link rel="stylesheet" type="text/css" href="src/basic_color.css">
-		<link rel="stylesheet" type="text/css" href="src/basic_dimentions.css">
-		<script rel="javascript" type="text/javascript" src="src/script.js"></script>
+		<meta http-equiv="Content-Type" content="text/html;charset=utf-8" />
+		<script type="text/javascript" src="src/script.js"></script>
+		<link rel="stylesheet" type="text/css" href="src/basic_color.css" />
+		<link rel="stylesheet" type="text/css" href="src/basic_dimentions.css" />
 	</head>
 	<body>
-		<div id="smilData"></div>
-		<table align="center">
-			<tr>
-				<td class="corner" pos="upperleft"></td>
-				<td class="shortside" colspan=6><t/d>
-				<td class="corner" pos="upperright"></td>
-			</tr>
-			<tr>
-				<td class="longside"></td>
-				<td id="icon" rowspan=2><img src="src/Daisypict.jpg"></td>
-				<td id="back">Back</td>
-				<td id="play">Play</td>
-				<td id="stop">Stop</td>
-				<td id="forward">Forward</td>
-				<td id="skip">Skip</td>
-				<td class="longside"></td>
-			</tr>
-			<tr height="50 px">
-				<td class="longside"></td>
-				<td class="ProgressBar" colspan=5>
-					<div id="loadingBar" class="Bar" ></div>
-					<span id="loadingMessage" class="message">In Progress<span>
-				</td>
-				<td class="longside"></td>
-			</tr>
-			<tr>
-				<td class="longside"></td>
-				<td colspan=6>
-					<div id="toc"></div>
-				</td>
-				<td class="longside"></td>
-			</tr>
-			<tr>
-				<td class="corner" pos="lowerleft"></td>
-				<td class="shortside" colspan=6><t/d>
-				<td class="corner" pos="lowerright"></td>
-			</tr>
-		</table>
+		<fieldset>
+			<legend>Menu</legend>
+			<div>
+				<div id="play" onclick="alert(this.innerText);">Play</div>
+				<div id="stop" onclick="alert('Play');">Stop</div>
+				<div id="skip" onclick="alert('Play');">Skip</div>
+				<div id="forward" onclick="alert('Play');">Forvard</div>
+				<div id="backward" onclick="alert('Play');">Backward</div>
+				</div>
+	</fieldset>
+	<fieldset>
+			<legend>Status</legend>
+			<div>
+			<div>
+				<img src="src/Daisypict.jpg" alt="The Daisy Delight icon" />
+			</div>
+				<div>
+					<div class="progressBar">
+					<div class="progressMessage">In Progress...</div>
+						<div class="progress">
+						</div>
+					</div>
+				</div>
+				</div>
+			</fieldset>
+			<fieldset style="float:left;width:200pt;height:500pt;">
+				<legend>Free Text</legend>
+				<div>
+				<p>	And so the hunt began</p>
+				</div>
+		</fieldset>
+		<fieldset>
+			<legend>Table Of Content</legend>
+			<div>
+			<div>
+			 <h1>hedaing 1</h1>
+			 <h2>hedaing 2</h2>
+			 <h3>hedaing 3</h3>
+			 <h4>hedaing 4</h4>
+			</div>
+			</div>
+		</fieldset>
 	</body>
 </html>
