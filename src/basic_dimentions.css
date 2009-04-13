@@ -4,6 +4,7 @@
 fieldset{
 }
 fieldset div{
+	display:block;
 }
 fieldset div div{
 	padding:10pt;
@@ -11,17 +12,21 @@ fieldset div div{
 }
 
 .progressBar{
-	padding:10pt;
 	width:400pt;
 	border-width:1pt;
 	border-style:solid;
 	display:block;
 }
 .progressBar .progress{
-	padding:10pt;
+	height:2em;
+	padding:0pt;
 	display:block;
 }
 .progressMessage{
+	height:2em;
+	padding:0pt;
+	margin:0.5em;
+	position:absolute;
 	text-align:center;
 	display:block;
 }

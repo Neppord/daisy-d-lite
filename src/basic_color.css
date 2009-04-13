@@ -16,3 +16,6 @@ fieldset div{
 .progressBar .progress{
 	background-color:blue;
 }
+.progressMessage{
+	background-color:transparent;
+}
