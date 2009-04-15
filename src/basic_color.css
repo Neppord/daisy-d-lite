@@ -10,12 +10,21 @@ fieldset{
 fieldset div{
 	background-color:lightgreen;
 }
-.{
-	background-color:lightblue;
+.progressBar{
+	background-color:lightgreen;
 }
-.progressBar .progress{
-	background-color:blue;
+.resting{
+	background-image:url('progress.gif');
+}
+.working{
+	background-image:url('progress_anm.gif');
 }
 .progressMessage{
 	background-color:transparent;
+}
+.button:hover{
+	background-color:green;
+}
+.button{
+	background-color:darkgreen;
 }

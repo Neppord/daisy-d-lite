@@ -12,7 +12,7 @@ fieldset div div{
 }
 
 .progressBar{
-	width:400pt;
+	padding:5pt;
 	border-width:1pt;
 	border-style:solid;
 	display:block;
@@ -29,4 +29,6 @@ fieldset div div{
 	position:absolute;
 	text-align:center;
 	display:block;
+}
+.button{
 }

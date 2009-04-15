@@ -1,18 +1,51 @@
+DaisyDlite=new (
+		function(){
+			this.self=this;
+			self=this;
+			this.loadUI=(
+					function (){
+						self.load=document.getElementById("load");
+						self.load=searchLocalDir;
+						self.play=document.getElementById("play");
+						self.play.onclick=play;
+						self.stop=document.getElementById("stop");
+						self.stop.onclick=stop;
+						self.skip=document.getElementById("skip");
+						self.forward=document.getElementById("forward");
+						self.backwards=document.getElementById("backward");
+						self.progressBar=document.getElementById("progressBar");
+						self.progressBar.message=self.progressBar.getElementsByClassName("progressMessage")[0];
+						self.progressBar.bar=self.progressBar.getElementsByClassName("progress")[0];
+						self.progressBar.rest=(function (){this.bar.className=(this.bar.className.split(" ").filter( function (a) {return a!="resting" && a!="working";}).concat( ["resting"])).join(" ");});
+						self.progressBar.work=(function (){this.bar.className=(this.bar.className.split(" ").filter( function (a) {return a!="resting" && a!="working";}).concat( ["working"])).join(" ");});
+						self.progressBar.set=(function (value){
+							this.bar.style.width=value;
+							if (value>="100%"){
+								this.bar.style.width="100%";
+								this.rest();
+							else{
+								this.bar.style.width=value;
+								this.work();
+							}
+						})
+					}
+				);
+			})();
 function getAjax(){
 	return new XMLHttpRequest();
 }
 function searchLocalDir(e){
-	document.getElementById('loadingMessage').innerText="Trying to load local NCC file...";
+	DaisyDlite.progressBar.message.innerHTML="Trying to load local NCC file...";
 	ajax=getAjax();
 	ajax.onreadystatechange=function(){
-		document.getElementById("loadingBar").style.width=(100/4)*ajax.readyState+"%";
+		DaisyDlite.progressBar.set((100/4)*ajax.readyState+"%");
 		if(ajax.readyState==4){
 			rep=ajax.responseText;
 			ncc=crunchNCC(rep);
 			document.getElementById("toc").innerHTML=ncc;
 			smiles=extraxtSmilUrls(rep);
 			fetchSmils(smiles);
-			document.getElementById("loadingMessage").innerText="Sucessfully loaded Ncc";
+			DaisyDlite.progressBar.message.innerHTML="Sucessfully loaded Ncc";
 		}
 	};
 	ajax.open("GET","NCC.html",true);
@@ -21,15 +54,11 @@ function searchLocalDir(e){
 }
 function fetchSmils(smiles){
 	max=smiles.length
-	document.smiles=smiles;
+	DaisyDlite.smiles=smiles;
 	recived=0;
-	bar=document.getElementById("loadingBar");
-	message=document.getElementById("loadingMessage");
-	smilData=document.getElementById("smilData");
-	smilData.innerHTML="";
-	bar.style.width="0%";
-	message.innerText="Start Loading Smil Files..";
-	buffer={};
+	DaisyDlite.progressBar.set("0%");
+	DaisyDlite.progressBar.message.innerHTML="Start Loading Smil Files..";
+	DaisyDlite.buffer={};
 	if(smiles==null || smiles==[]){
 		alert("error");
 		return;
@@ -39,21 +68,20 @@ function fetchSmils(smiles){
 		name=smiles[i]
 		function onreadystatechange(){
 			if(ajax.readyState==4){
-				buffer[name]=ajax.responseText;
+				DaisyDlite.buffer[name]=ajax.responseText;
 				recived+=1;
-				bar.style.width=(100/max)*recived+"%";
+				DaisyDlite.progressBar.set((100/max)*recived+"%");
 				if(recived=max){
-					document.buffer=buffer;	
-					message.innerText="Recived all Smil Files crunching data...";
+					DaisyDlite.progressBar.message.innerHTML="Recived all Smil Files crunching data...";
 					for(x in document.buffer){
-						document.buffer[x]=crunchSMIL(document.buffer[x]);
+						DaisyDlite.buffer[x]=crunchSMIL(DaisyDlite.buffer[x]);
 					}
-					message.innerText="Done crunching you can now Play";
-					document.number=recived;
+					DaisyDlite.progressBar.message.innerHTML="Done crunching you can now Play";
+					DaisyDlite.number=recived;
 
 				}
 				else{
-					message.innerText="Recived "+recived+" of "+max+" Smil Files";
+					DaisyDlite.progressBar.message.innerText="Recived "+recived+" of "+max+" Smil Files";
 				}
 			}
 		}
@@ -70,14 +98,17 @@ function crunchNCC(ncc){
 	return ncc;
 }
 function play(smilFile,id){
-	document.getElementById("smilData").innerHTML=document.buffer[smilFile];	
-	document.current=document.getElementById(id).getElementsByTagName("audio")[0]
-	document.current.onhashchange=function (e){ alert(this.paused);}
-	document.current.play()
-	document.getElementById('loadingMessage').innerText="Playing id "+id+" in file "+smilFile;
+	if (smilFile==undefined){
+		DaisyDlite.current.play();
+	}
+	DaisyDlite.smilData=document.createDocumentFragment(DaisyDlite.buffer[smilFile]);	
+	DaisyDlite.current=DaisyDlite.smilData.getElementById(id).getElementsByTagName("audio")[0]
+	DaisyDlite.current.onhashchange=function (e){ alert(this.paused);}
+	DaisyDlite.current.play()
+	DaisyDlite.progressBar.message.innerHTML="Playing id "+id+" in file "+smilFile;
 }
 function stop(){
-	document.current.pause();
+	DaisyDlite.current.pause();
 }
 function crunchSMIL(smil){
 	smil=smil.toLowerCase();

@@ -1,4 +1,4 @@
-<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd">
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
 <html xmlns="http://www.w3.org/1999/xhtml" lang="en" xml:lang="en">
 	<head>
 		<title>Daisy(D)Lite</title>
@@ -7,42 +7,53 @@
 		<link rel="stylesheet" type="text/css" href="src/basic_color.css" />
 		<link rel="stylesheet" type="text/css" href="src/basic_dimentions.css" />
 	</head>
-	<body>
+	<body onload="DaisyDlite.loadUI();">
 		<fieldset>
 			<legend>Menu</legend>
 			<div>
-				<div id="play" onclick="alert(this.innerText);">Play</div>
-				<div id="stop" onclick="alert('Play');">Stop</div>
-				<div id="skip" onclick="alert('Play');">Skip</div>
-				<div id="forward" onclick="alert('Play');">Forvard</div>
-				<div id="backward" onclick="alert('Play');">Backward</div>
-				</div>
+				<center>
+					<div id="load" class="button" >
+						Load
+					</div>
+					<div id="play" class="button" >
+						Play
+					</div>
+					<div id="stop" class="button" >
+						Stop
+					</div>
+					<div id="skip" class="button" >
+						Skip
+					</div>
+					<div id="forward" class="button" >
+						Forvard 
+					</div>
+					<div id="backward" class="button" >
+						Backward
+					</div>
+				</center>
+			</div>
 	</fieldset>
 	<fieldset>
 			<legend>Status</legend>
 			<div>
 			<div>
-				<img src="src/Daisypict.jpg" alt="The Daisy Delight icon" />
+				<img align="middle" src="src/Daisypict.jpg" alt="The Daisy Delight icon" />
 			</div>
 				<div>
-					<div class="progressBar">
-					<div class="progressMessage">In Progress...</div>
-						<div class="progress">
-						</div>
+					And so the hunt began
+				</div>
+				<div style="display:block;">
+					<div id="progressBar" class="progressBar">
+						<div class="progressMessage">In Progress...</div>
+						<div class="progress resting" width="100%"></div>
 					</div>
 				</div>
 				</div>
 			</fieldset>
-			<fieldset style="float:left;width:200pt;height:500pt;">
-				<legend>Free Text</legend>
-				<div>
-					And so the hunt began
-				</div>
-		</fieldset>
 		<fieldset>
 			<legend>Table Of Content</legend>
 			<div>
-			<div>
+			<div id="toc" >
 			 <h1>hedaing 1</h1>
 			 <h2>hedaing 2</h2>
 			 <h3>hedaing 3</h3>
