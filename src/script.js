@@ -19,13 +19,12 @@ DaisyDlite=new (
 						self.progressBar.rest=(function (){this.bar.className=(this.bar.className.split(" ").filter( function (a) {return a!="resting" && a!="working";}).concat( ["resting"])).join(" ");});
 						self.progressBar.work=(function (){this.bar.className=(this.bar.className.split(" ").filter( function (a) {return a!="resting" && a!="working";}).concat( ["working"])).join(" ");});
 						self.progressBar.set=(function (value){
-							this.bar.style.width=value;
 							if (value>="100%"){
 								this.bar.style.width="100%";
-								this.rest();
-							else{
+								//this.rest();
+								}else{
 								this.bar.style.width=value;
-								this.work();
+								//this.work();
 							}
 						})
 					}

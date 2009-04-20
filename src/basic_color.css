@@ -12,6 +12,8 @@ fieldset div{
 }
 .progressBar{
 	background-color:lightgreen;
+	background-repeat:repeat-x;
+	background-image:url('progress_gray.gif');
 }
 .resting{
 	background-image:url('progress.gif');

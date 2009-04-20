@@ -16,16 +16,19 @@ fieldset div div{
 	border-width:1pt;
 	border-style:solid;
 	display:block;
+
+	background-position:center;
+	
 }
 .progressBar .progress{
-	height:2em;
+	height: 20px;
 	padding:0pt;
 	display:block;
 }
 .progressMessage{
-	height:2em;
+	height:20px;
 	padding:0pt;
-	margin:0.5em;
+	margin:2.5px;
 	position:absolute;
 	text-align:center;
 	display:block;
