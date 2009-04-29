@@ -1,3 +1,25 @@
+function log(){
+	window.console&& window.console.log.apply(window.console,arguments);
+}
+function ajaxFeed(func,url){
+	ajax=new XMLHttpRequest();
+	ajax.open("GET",url,false);// not asyncronus
+	log("fetching file: %s",url)
+	ajax.send(null);
+	log("calling %s with %s content",[new String(func), url]);
+	return func(ajax.responseText);
+}
+Book=function (){}
+Book.prototype={
+	addSmil:function (smilUrl){
+		ajaxFeed(this._addSmil,smilUrl);
+	},
+	_addSmil:function (smilText){
+		document.body.innerText=smilText;
+	}
+}
+
+//----------------------old Code-------------------------
 DaisyDlite=new (
 		function(){
 			this.self=this;
@@ -32,6 +54,13 @@ DaisyDlite=new (
 			})();
 function getAjax(){
 	return new XMLHttpRequest();
+}
+function loadSyncFile(src){
+	ajax=getAjax();
+	ajax.open("GET",src,false);
+	ajax.send(null);
+	return ajax.responseText
+
 }
 function searchLocalDir(e){
 	DaisyDlite.progressBar.message.innerHTML="Trying to load local NCC file...";

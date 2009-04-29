@@ -34,4 +34,9 @@ fieldset div div{
 	display:block;
 }
 .button{
+	display: inline;
+	border: 1px solid;
+	padding: .5em;
+	margin: 0;
+	border-color:#f3f3f3 #bbb #bbb #f3f3f3;
 }
