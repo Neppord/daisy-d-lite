@@ -27,6 +27,10 @@ fieldset div{
 .button:hover{
 	background-color:green;
 }
+.button:active{
+	border-color:#040 #0b0 #0b0 #040;
+	background-color:darkgreen;
+}
 .button{
 	background-color:darkgreen;
 	border-color:#0b0 #040 #040 #0b0;

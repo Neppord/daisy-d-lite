@@ -6,17 +6,37 @@ function ajaxFeed(func,url){
 	ajax.open("GET",url,false);// not asyncronus
 	log("fetching file: %s",url)
 	ajax.send(null);
-	log("calling %s with %s content",[new String(func), url]);
-	return func(ajax.responseText);
+	log("calling %s with %s's content",new String(func), url);
+	return func.call(this,ajax.responseText);
 }
-Book=function (){}
-Book.prototype={
-	addSmil:function (smilUrl){
-		ajaxFeed(this._addSmil,smilUrl);
-	},
-	_addSmil:function (smilText){
-		document.body.innerText=smilText;
-	}
+LocalBook=function (path){
+	this.path=path;
+	this.loadNcc();
+}
+LocalBook.prototype={
+	//metods
+	loadNcc:function (){
+					this.rawNcc=loadSyncFile(this.path+"/ncc.html");
+
+					}
+	addSmil:
+		function (smilUrl){
+			ajaxFeed.call(this,this._addSmil,smilUrl);
+		},
+	_addSmil:
+		function (smilText){
+			ids=smilText.match(/id="?'?\w+"?'?/gi);
+			ids=ids.map(function (a){
+					return a.replace(/id="?'?(\w+)"?'?/gi,"$1")
+					})
+			for(i in ids){
+
+			}
+			document.body.innerText=String(ids);
+		},
+	// fields
+	idMap:{},
+	itemList:[],
 }
 
 //----------------------old Code-------------------------
