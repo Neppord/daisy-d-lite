@@ -7,16 +7,16 @@
 		<link rel="stylesheet" type="text/css" href="src/basic_color.css" />
 		<link rel="stylesheet" type="text/css" href="src/basic_dimentions.css" />
 	</head>
-	<body onload="DaisyDlite.loadUI();">
+	<body onload="loadConstants();">
 		<fieldset>
 			<legend>Menu</legend>
 			<div>
 				<center>
 				<ul class="H_menu">
-					<li id="load" class="button" >
+					<li id="load" class="button" onClick="load();" >
 						Load
 					</li>
-					<li id="play" class="button" >
+					<li id="play" class="button" onClick="play();">
 						Play
 					</li>
 					<li id="stop" class="button" >
@@ -41,14 +41,15 @@
 			<div>
 				<img align="middle" src="src/Daisypict.jpg" alt="The Daisy Delight icon" />
 			</div>
-				<div>
+				<div id="textDisplay">
 					And so the hunt began
 				</div>
+				<audio id="audioPlayer"> Sorry your browser dos not support The HTML5 audio tag and can by that not work with Daisy (D)lite!</audio>
 				<div style="display:block;">
 					<div style="padding:5;margin:0;display:block;border:1pt solid;">
 						<div id="progressBar" class="progressBar">
-							<div class="progressMessage">In Progress...</div>
-							<div class="progress resting" width="100%"></div>
+							<div id="progressDisplay" class="progressMessage">In Progress...</div>
+							<div id="progress" class="progress resting" width="100%"></div>
 						</div>
 					</div>
 				</div>
@@ -57,7 +58,7 @@
 		<fieldset>
 			<legend>Table Of Content</legend>
 			<div>
-			<div id="toc" >
+			<div id="tocDisplay" >
 			 <h1>hedaing 1</h1>
 			 <h2>hedaing 2</h2>
 			 <h3>hedaing 3</h3>

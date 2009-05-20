@@ -32,6 +32,10 @@ fieldset div{
 	background-color:darkgreen;
 }
 .button{
+	cursor:pointer;
 	background-color:darkgreen;
 	border-color:#0b0 #040 #040 #0b0;
+}
+#tocDisplay div,span,a{
+	background-color:green;
 }

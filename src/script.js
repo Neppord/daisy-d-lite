@@ -1,78 +1,41 @@
+/*
+	 trying to do it old fasion way with out objects
+ */
+
+// datastructures
+/* audioMap:
+	 	keys - file#id
+		values - lists of:
+			list with index:
+				0 - url of file
+				1 - start of clip
+				2 - end of clip
+ */
+audioMap={};
+/* textMap:
+	 keys - file#id
+	 value - the text displayed for the id
+	 */
+textMap={};
+basePath="media/";
+
+// Constants
+
+function loadConstants (){
+TEXTDISPLAY=document.getElementById("textDisplay");
+TOCDISPLAY=document.getElementById("tocDisplay")
+PROGRESSDISPLAY=document.getElementById("progressDisplay");
+PROGRESS=document.getElementById("progress");
+AUDIOPLAYER=document.getElementById("audioPlayer");
+}
+//functions
+
 function log(){
+	//This Function is convinient for loging events to the console in fire bug and the element inspector
 	window.console&& window.console.log.apply(window.console,arguments);
 }
-function ajaxFeed(func,url){
-	ajax=new XMLHttpRequest();
-	ajax.open("GET",url,false);// not asyncronus
-	log("fetching file: %s",url)
-	ajax.send(null);
-	log("calling %s with %s's content",new String(func), url);
-	return func.call(this,ajax.responseText);
-}
-LocalBook=function (path){
-	this.path=path;
-	this.loadNcc();
-}
-LocalBook.prototype={
-	//metods
-	loadNcc:function (){
-					this.rawNcc=loadSyncFile(this.path+"/ncc.html");
-
-					}
-	addSmil:
-		function (smilUrl){
-			ajaxFeed.call(this,this._addSmil,smilUrl);
-		},
-	_addSmil:
-		function (smilText){
-			ids=smilText.match(/id="?'?\w+"?'?/gi);
-			ids=ids.map(function (a){
-					return a.replace(/id="?'?(\w+)"?'?/gi,"$1")
-					})
-			for(i in ids){
-
-			}
-			document.body.innerText=String(ids);
-		},
-	// fields
-	idMap:{},
-	itemList:[],
-}
-
-//----------------------old Code-------------------------
-DaisyDlite=new (
-		function(){
-			this.self=this;
-			self=this;
-			this.loadUI=(
-					function (){
-						self.load=document.getElementById("load");
-						self.load=searchLocalDir;
-						self.play=document.getElementById("play");
-						self.play.onclick=play;
-						self.stop=document.getElementById("stop");
-						self.stop.onclick=stop;
-						self.skip=document.getElementById("skip");
-						self.forward=document.getElementById("forward");
-						self.backwards=document.getElementById("backward");
-						self.progressBar=document.getElementById("progressBar");
-						self.progressBar.message=self.progressBar.getElementsByClassName("progressMessage")[0];
-						self.progressBar.bar=self.progressBar.getElementsByClassName("progress")[0];
-						self.progressBar.rest=(function (){this.bar.className=(this.bar.className.split(" ").filter( function (a) {return a!="resting" && a!="working";}).concat( ["resting"])).join(" ");});
-						self.progressBar.work=(function (){this.bar.className=(this.bar.className.split(" ").filter( function (a) {return a!="resting" && a!="working";}).concat( ["working"])).join(" ");});
-						self.progressBar.set=(function (value){
-							if (value>="100%"){
-								this.bar.style.width="100%";
-								//this.rest();
-								}else{
-								this.bar.style.width=value;
-								//this.work();
-							}
-						})
-					}
-				);
-			})();
 function getAjax(){
+	//this Function is used so that we can extract the Ajax cretion for difernet brower from the app code
 	return new XMLHttpRequest();
 }
 function loadSyncFile(src){
@@ -80,26 +43,77 @@ function loadSyncFile(src){
 	ajax.open("GET",src,false);
 	ajax.send(null);
 	return ajax.responseText
-
 }
-function searchLocalDir(e){
-	DaisyDlite.progressBar.message.innerHTML="Trying to load local NCC file...";
-	ajax=getAjax();
-	ajax.onreadystatechange=function(){
-		DaisyDlite.progressBar.set((100/4)*ajax.readyState+"%");
-		if(ajax.readyState==4){
-			rep=ajax.responseText;
-			ncc=crunchNCC(rep);
-			document.getElementById("toc").innerHTML=ncc;
-			smiles=extraxtSmilUrls(rep);
-			fetchSmils(smiles);
-			DaisyDlite.progressBar.message.innerHTML="Sucessfully loaded Ncc";
-		}
-	};
-	ajax.open("GET","NCC.html",true);
+function setProgress(width){
+	PROGRESS.style.width=width;
+}
+function setProgressMsg(s){
+	PROGRESSDISPLAY.innerHTML=String(s);
+}
+function loadNCC(){
+	setProgressMsg("Loading Ncc..");
+	setProgress("0%");
+	var file=loadSyncFile(basePath+"ncc.html")	
+	setProgress("25%");
+	file=file.replace(/(?:.|\n)*<body>((?:.|\n)*)<\/body>(?:.|\n)*/gim,"$1");
+	setProgress("50%");
+	file=file.replace(
+			/<a(.*)href=("?'?)(.*\#.*)\2(.*)>(.*)<\/a>/g,
+			"<span $1onClick=\"play(\'$3\')\;\"$4>$5<\/span>"
+			);
+	setProgress("75%");
+	TOCDISPLAY.innerHTML=file;
+	setProgress("100%");
+	setProgressMsg("Ncc Loaded");
+}
+//function bindings
+function load(){
+	loadNCC();
+}
+function play(id){
+	if (id==undefined){
+		AUDIOPLAYER.play();
+		return;
+	}
+	loadID(id);
+	log("start playing id:%s",id);
+}
+function loadID(id){	
+	var a=audioMap[d];
+	AUDIOPLAYER.src=a[0];
+}
+window.addEventListener("keypress",function (e){
+			e=e || window.event;
+			if(e.altKey || e.ctrlKey || e.shiftKey){
+				return;
+			}
+			switch(String.fromCharCode(e.keyCode || e.charCode)){
+				case "l":load();break;
+				case "p":play();break;
+			}
+		},false);
+
+
+//----- more old code----------
+function ajaxFeed(func,url){
+	ajax=new XMLHttpRequest();
+	ajax.open("GET",url,false);// not asyncronus
+	log("fetching file: %s",url)
 	ajax.send(null);
-
+	log("calling %s with %s content",[new String(func), url]);
+	return func(ajax.responseText);
 }
+Book=function (){}
+Book.prototype={
+	addSmil:function (smilUrl){
+		ajaxFeed(this._addSmil,smilUrl);
+	},
+	_addSmil:function (smilText){
+		document.body.innerText=smilText;
+	}
+}
+
+//----------------------old Code-------------------------
 function fetchSmils(smiles){
 	max=smiles.length
 	DaisyDlite.smiles=smiles;
@@ -139,22 +153,7 @@ function fetchSmils(smiles){
 		//bar.style.width=100/max*(i+1)+"%";
 	}
 	}
-function crunchNCC(ncc){
-	ncc=ncc.toLowerCase();
-	ncc=ncc.match(/<body>((:?.|\n)*)<\/body>/)[0];
-	ncc=ncc.replace(/<a(.*)href="(.*)#(.*)"(.*)>(.*)<\/a>/g,"<div $1onClick=\"play(\'$2\',\'$3\');\"$4>$5</div>")
-	return ncc;
-}
-function play(smilFile,id){
-	if (smilFile==undefined){
-		DaisyDlite.current.play();
-	}
-	DaisyDlite.smilData=document.createDocumentFragment(DaisyDlite.buffer[smilFile]);	
-	DaisyDlite.current=DaisyDlite.smilData.getElementById(id).getElementsByTagName("audio")[0]
-	DaisyDlite.current.onhashchange=function (e){ alert(this.paused);}
-	DaisyDlite.current.play()
-	DaisyDlite.progressBar.message.innerHTML="Playing id "+id+" in file "+smilFile;
-}
+
 function stop(){
 	DaisyDlite.current.pause();
 }
