@@ -2,21 +2,29 @@
 	 trying to do it old fasion way with out objects
  */
 
+
 // datastructures
-/* audioMap:
-	 	keys - file#id
-		values - lists of:
-			list with index:
-				0 - url of file
-				1 - start of clip
-				2 - end of clip
- */
-audioMap={};
-/* textMap:
-	 keys - file#id
-	 value - the text displayed for the id
+/*
+	 smils a dict of the smils with key of the url
+	 and value as indexDict and smilLists
 	 */
-textMap={};
+smils={}
+/* smilList:
+	 Audio Element
+			list with index:
+				0 - "audio"
+				1 - url of file
+				2 - start of clip
+				3 - end of clip
+	Text Element:
+			List with index:
+				0 - "text"
+				1 - the text
+	indexDict:
+		key id in the paired smile valus are infdexes in the smil List for that tags content 
+ */
+smil=[{},[]];
+index=0;
 basePath="media/";
 
 // Constants
@@ -39,13 +47,132 @@ function getAjax(){
 	return new XMLHttpRequest();
 }
 function loadSyncFile(src){
-	ajax=getAjax();
+	var ajax=getAjax();
 	ajax.open("GET",src,false);
 	ajax.send(null);
 	return ajax.responseText
 }
+function loadSyncDoc(src){
+	var ajax=getAjax();
+	ajax.open("GET",src,false);
+	ajax.send(null);
+	return ajax.responseXML
+}
+function loadNCCTest(){
+	var doc= loadSyncDoc(basePath+"ncc.html");
+	var a=new Array();
+	var walker = document.createTreeWalker(
+			doc,
+			NodeFilter.SHOW_ALL,
+			function (node){
+				if(node.tagName=="a"){
+					switch(node.parentNode.tagName){
+						case "h1":return NodeFilter.FILTER_ACCEPT;break;
+						case "h2":return NodeFilter.FILTER_ACCEPT;break;
+						case "h3":return NodeFilter.FILTER_ACCEPT;break;
+						case "h4":return NodeFilter.FILTER_ACCEPT;break;
+						case "h5":return NodeFilter.FILTER_ACCEPT;break;
+						case "h6":return NodeFilter.FILTER_ACCEPT;break;
+						case "span":return NodeFilter.FILTER_ACCEPT;break;
+					}
+				}
+				return NodeFilter.FILTER_SKIP;
+			},
+			false
+			);
+	while(walker.nextNode()){
+		//FIXME problem if href is "somthing#somthin#somting"
+		var l=walker.currentNode.attributes.getNamedItem("href").value.split("#");
+		l[l.length]=walker.currentNode.parentNode.tagName;
+		l[l.length]=walker.currentNode.innerText;//should it be HTML?
+		a[a.length]=l;
+	}
+	return a;
+}
+function loadSmileTest(nccList){
+	var hash={};
+	var smil;
+	var index;
+	for(i in nccList){
+		if(nccList[i][0] in hash){
+		//=hash[nccList[i][0]];
+		}else{
+			var doc=loadSyncDoc(basePath+nccList[i][0]);
+			var walker=document.createTreeWalker(
+					doc,
+					NodeFilter.SHOW_ELEMENT,
+					function(node){
+						if(node.attributes.getNamedItem("id")!=null){
+							return NodeFilter.FILTER_ACCEPT;
+						};
+						switch(node.tagName.toLowerCase){
+							case "text": return NodeFilter.FILTER_ACCEPT;break;
+							case "audio":return NodeFilter.FILTER_ACCEPT;break;
+						}
+						return NodeFilter.FILTER_SKIP;
+					},
+					false
+					);
+			smil=[];
+			index={};
+			while(walker.nextNode()){
+				if(walker.currentNode.attributes.getNamedItem("id")!=null){
+					index[walker.currentNode.attributes.getNamedItem("id").value]=smil.length;
+				}
+				if(walker.currentNode.tagName.toLowerCase()=="audio"){
+					smil[smil.length]=[
+						"audio",
+						basePath+walker.currentNode.attributes.getNamedItem("src").value,
+						new Number(walker.currentNode.attributes.getNamedItem("clip-begin").value.split("npt=")[1]),
+						new Number(walker.currentNode.attributes.getNamedItem("clip-end").value.split("npt=")[1]),
+					];
+				}else if(walker.currentNode.tagName.toLowerCase()=="text"){
+					var text=basePath+walker.currentNode.attributes.getNamedItem("src").value.split("#")[0];;
+					//console.log(text);
+					//text=loadSyncDoc(text)
+					//console.dirxml(text);
+					//text=text.getElementById(walker.currentNode.attributes.getNamedItem("src").value.split("#")[1]);
+					//text=text.innerHTML;
+					smil[smil.length]=[
+						"text",
+						text,
+					];
+				}
+			}
+			hash[nccList[i][0]]=[index,smil];
+		}
+	}
+	return hash;
+}
+function fillTOC(nccList){
+	var table=document.createElement("table");
+	var tbody=document.createElement("tbody");
+	table.appendChild(tbody);
+	var stack=[];
+	for(i in nccList){
+		var row=document.createElement("tr");
+		row.onclick=function (){play(nccList[i][0],nccList[i][1]);}
+		var id=document.createElement("td");
+		id.innerText=nccList[i][1];
+		var tag=document.createElement("td");
+		tag.innerText=nccList[i][2];
+		var text=document.createElement("td");
+		text.innerText=nccList[i][3];
+		row.appendChild(tag);
+		row.appendChild(id);
+		row.appendChild(text);
+		tbody.appendChild(row);
+	}
+	TOCDISPLAY.innerHTML="";
+	TOCDISPLAY.appendChild(table);
+}
+function loadTest(){
+	var nccList=loadNCCTest();
+	fillTOC(nccList);
+	return [nccList,loadSmileTest(nccList)];
+}
 function setProgress(width){
-	PROGRESS.style.width=width;
+PROGRESS.style.width=width;
 }
 function setProgressMsg(s){
 	PROGRESSDISPLAY.innerHTML=String(s);
@@ -68,19 +195,44 @@ function loadNCC(){
 }
 //function bindings
 function load(){
-	loadNCC();
+	var a=loadTest();
+	smils=a[1];
 }
-function play(id){
-	if (id==undefined){
+function play(file,id){
+	if (id==undefined && file==undefined){
 		AUDIOPLAYER.play();
 		return;
 	}
-	loadID(id);
+	loadID(file,id);
 	log("start playing id:%s",id);
 }
-function loadID(id){	
-	var a=audioMap[d];
-	AUDIOPLAYER.src=a[0];
+function skip(){
+	AUDIOPLAYER.pause();
+	index=index+1;
+	var smilList=smil[1];
+	if(smilList[index][0]=="text"){
+		TEXTDISPLAY.innerText=smilList[index][1];
+		index=index+1;
+		AUDIOPLAYER.src=smilList[index][1];
+	}else if (smilList[index][0]="audio"){
+		AUDIOPLAYER.src=smilList[index][1];
+	}
+	AUDIOPLAYER.play();
+}
+function loadID(file,id){	
+	AUDIOPLAYER.pause();
+	smil=smils[file];
+	var indexDict=smil[0];
+	var smilList=smil[1];
+	index=indexDict[id];
+	if(smilList[index][0]=="text"){
+		TEXTDISPLAY.innerText=smilList[index][1];
+		index=index+1;
+		AUDIOPLAYER.src=smilList[index][1];
+	}else if (smilList[index][0]="audio"){
+		AUDIOPLAYER.src=smilList[index][1];
+	}
+	AUDIOPLAYER.play();
 }
 window.addEventListener("keypress",function (e){
 			e=e || window.event;
