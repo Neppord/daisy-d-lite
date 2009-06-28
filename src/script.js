@@ -136,6 +136,7 @@ function loadSmileTest(nccList){
 					smil[smil.length]=[
 						"text",
 						text,
+						walker.currentNode.attributes.getNamedItem("src").value.split("#")[1],
 					];
 				}
 			}
@@ -226,7 +227,7 @@ function loadID(file,id){
 	var smilList=smil[1];
 	index=indexDict[id];
 	if(smilList[index][0]=="text"){
-		TEXTDISPLAY.innerText=smilList[index][1];
+		TEXTDISPLAY.innerText=smilList[index][1]+":"+smilList[index][2];
 		index=index+1;
 		AUDIOPLAYER.src=smilList[index][1];
 	}else if (smilList[index][0]="audio"){
