@@ -21,20 +21,25 @@ smils={}
 				0 - "text"
 				1 - the text
 	indexDict:
-		key id in the paired smile valus are infdexes in the smil List for that tags content 
+		key id in the paired smile valus are indexes in the smil List for that tags content 
  */
-smil=[{},[]];
+/*
+	 htmls a dict of the html documents with key of the url
+	 and value as id->text mapping
+	 */
+htmls={};
+smil=[{},[]];//fixme: refactor to a better name, this is the current smil.
 index=0;
 basePath="media/";
 
 // Constants
 
 function loadConstants (){
-TEXTDISPLAY=document.getElementById("textDisplay");
-TOCDISPLAY=document.getElementById("tocDisplay")
-PROGRESSDISPLAY=document.getElementById("progressDisplay");
-PROGRESS=document.getElementById("progress");
-AUDIOPLAYER=document.getElementById("audioPlayer");
+	TEXTDISPLAY=document.getElementById("textDisplay");
+	TOCDISPLAY=document.getElementById("tocDisplay")
+	PROGRESSDISPLAY=document.getElementById("progressDisplay");
+	PROGRESS=document.getElementById("progress");
+	AUDIOPLAYER=document.getElementById("audioPlayer");
 }
 //functions
 
@@ -82,19 +87,20 @@ function loadNCCTest(){
 			);
 	while(walker.nextNode()){
 		//FIXME problem if href is "somthing#somthin#somting"
-		var l=walker.currentNode.attributes.getNamedItem("href").value.split("#");
+		var l=walker.currentNode.getAttribute("href").split("#");
 		l[l.length]=walker.currentNode.parentNode.tagName;
-		l[l.length]=walker.currentNode.innerText;//should it be HTML?
+		l[l.length]=walker.currentNode.textContent;//should it be HTML?
 		a[a.length]=l;
 	}
 	return a;
 }
 function loadSmileTest(nccList){
-	var hash={};
+	var smilHash={};
+	var htmlHash={};
 	var smil;
 	var index;
 	for(i in nccList){
-		if(nccList[i][0] in hash){
+		if(nccList[i][0] in smilHash){
 		//=hash[nccList[i][0]];
 		}else{
 			var doc=loadSyncDoc(basePath+nccList[i][0]);
@@ -102,9 +108,9 @@ function loadSmileTest(nccList){
 					doc,
 					NodeFilter.SHOW_ELEMENT,
 					function(node){
-						if(node.attributes.getNamedItem("id")!=null){
+						if(node.getAttribute("id")){
 							return NodeFilter.FILTER_ACCEPT;
-						};
+						}
 						switch(node.tagName.toLowerCase){
 							case "text": return NodeFilter.FILTER_ACCEPT;break;
 							case "audio":return NodeFilter.FILTER_ACCEPT;break;
@@ -116,34 +122,50 @@ function loadSmileTest(nccList){
 			smil=[];
 			index={};
 			while(walker.nextNode()){
-				if(walker.currentNode.attributes.getNamedItem("id")!=null){
-					index[walker.currentNode.attributes.getNamedItem("id").value]=smil.length;
+				if(walker.currentNode.getAttribute("id")){
+					index[walker.currentNode.getAttribute("id")]=smil.length;
 				}
 				if(walker.currentNode.tagName.toLowerCase()=="audio"){
 					smil[smil.length]=[
 						"audio",
-						basePath+walker.currentNode.attributes.getNamedItem("src").value,
-						new Number(walker.currentNode.attributes.getNamedItem("clip-begin").value.split("npt=")[1]),
-						new Number(walker.currentNode.attributes.getNamedItem("clip-end").value.split("npt=")[1]),
+						basePath+walker.currentNode.getAttribute("src"),
+						new Number(walker.currentNode.getAttribute("clip-begin").split("npt=")[1]),
+						new Number(walker.currentNode.getAttribute("clip-end").split("npt=")[1]),
 					];
 				}else if(walker.currentNode.tagName.toLowerCase()=="text"){
-					var text=basePath+walker.currentNode.attributes.getNamedItem("src").value.split("#")[0];;
-					//console.log(text);
-					//text=loadSyncDoc(text)
-					//console.dirxml(text);
-					//text=text.getElementById(walker.currentNode.attributes.getNamedItem("src").value.split("#")[1]);
-					//text=text.innerHTML;
+					var text=basePath+walker.currentNode.getAttribute("src").split("#")[0];
+					if(!(text in htmlHash)){
+						var html={};
+						var doc=loadSyncDoc(text);
+						log(doc);
+						var w=document.createTreeWalker(
+								doc,
+								NodeFilter.SHOW_ELEMENT,
+								function(node){
+									if(node.getAttribute("id")){
+										return NodeFilter.FILTER_ACCEPT;
+									}else{
+										return NodeFilter.FILTER_SKIP;
+									}
+								},
+								false
+								);
+						while(w.nextNode()){
+							html[w.currentNode.getAttribute("id")]=w.currentNode.textContent;
+						}
+						htmlHash[text]=html;
+					}
 					smil[smil.length]=[
 						"text",
 						text,
-						walker.currentNode.attributes.getNamedItem("src").value.split("#")[1],
+						walker.currentNode.getAttribute("src").split("#")[1],
 					];
 				}
 			}
-			hash[nccList[i][0]]=[index,smil];
+			smilHash[nccList[i][0]]=[index,smil];
 		}
 	}
-	return hash;
+	return [smilHash,htmlHash];
 }
 function fillTOC(nccList){
 	var table=document.createElement("table");
@@ -152,13 +174,16 @@ function fillTOC(nccList){
 	var stack=[];
 	for(i in nccList){
 		var row=document.createElement("tr");
-		row.onclick=function (){play(nccList[i][0],nccList[i][1]);}
+		(function(){
+			var tmp=i;
+			row.onclick=function (){log("onclick:");play(nccList[tmp][0],nccList[tmp][1]);}
+		})();
 		var id=document.createElement("td");
-		id.innerText=nccList[i][1];
+		id.textContent=nccList[i][1];
 		var tag=document.createElement("td");
-		tag.innerText=nccList[i][2];
+		tag.textContent=nccList[i][2];
 		var text=document.createElement("td");
-		text.innerText=nccList[i][3];
+		text.textContent=nccList[i][3];
 		row.appendChild(tag);
 		row.appendChild(id);
 		row.appendChild(text);
@@ -169,8 +194,8 @@ function fillTOC(nccList){
 }
 function loadTest(){
 	var nccList=loadNCCTest();
-	fillTOC(nccList);
-	return [nccList,loadSmileTest(nccList)];
+	var tmp=loadSmileTest(nccList);
+	return [nccList,tmp[0],tmp[1]];
 }
 function setProgress(width){
 PROGRESS.style.width=width;
@@ -197,7 +222,9 @@ function loadNCC(){
 //function bindings
 function load(){
 	var a=loadTest();
+	fillTOC(a[0]);
 	smils=a[1];
+	htmls=a[2];
 }
 function play(file,id){
 	if (id==undefined && file==undefined){
@@ -212,7 +239,8 @@ function skip(){
 	index=index+1;
 	var smilList=smil[1];
 	if(smilList[index][0]=="text"){
-		TEXTDISPLAY.innerText=smilList[index][1];
+		var text=smilList.map(function (e,i,a){return (e[0]=='text')?((i==index)?"<strong>"+htmls[e[1]][e[2]]+"</strong>":htmls[e[1]][e[2]]):undefined}).join(" ");
+		TEXTDISPLAY.innerHTML=text;//htmls[smilList[index][1]][smilList[index][2]]
 		index=index+1;
 		AUDIOPLAYER.src=smilList[index][1];
 	}else if (smilList[index][0]="audio"){
@@ -227,7 +255,8 @@ function loadID(file,id){
 	var smilList=smil[1];
 	index=indexDict[id];
 	if(smilList[index][0]=="text"){
-		TEXTDISPLAY.innerText=smilList[index][1]+":"+smilList[index][2];
+		var text=smilList.map(function (e,i,a){return (e[0]=='text')?((i==index)?"<strong>"+htmls[e[1]][e[2]]+"</strong>":htmls[e[1]][e[2]]):undefined}).join(" ");
+		TEXTDISPLAY.innerHTML=text;//htmls[smilList[index][1]][smilList[index][2]]
 		index=index+1;
 		AUDIOPLAYER.src=smilList[index][1];
 	}else if (smilList[index][0]="audio"){
@@ -262,7 +291,7 @@ Book.prototype={
 		ajaxFeed(this._addSmil,smilUrl);
 	},
 	_addSmil:function (smilText){
-		document.body.innerText=smilText;
+		document.body.textContent=smilText;
 	}
 }
 
@@ -296,7 +325,7 @@ function fetchSmils(smiles){
 
 				}
 				else{
-					DaisyDlite.progressBar.message.innerText="Recived "+recived+" of "+max+" Smil Files";
+					DaisyDlite.progressBar.message.textContent="Recived "+recived+" of "+max+" Smil Files";
 				}
 			}
 		}
