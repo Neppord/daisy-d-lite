@@ -8,7 +8,7 @@
 	 smils a dict of the smils with key of the url
 	 and value as indexDict and smilLists
 	 */
-smils={}
+smils={};
 /* smilList:
 	 Audio Element
 			list with index:
@@ -248,6 +248,9 @@ function skip(){
 	}
 	AUDIOPLAYER.play();
 }
+function stop(){
+	AUDIOPLAYER.pause();
+}
 function loadID(file,id){	
 	AUDIOPLAYER.pause();
 	smil=smils[file];
@@ -272,85 +275,9 @@ window.addEventListener("keypress",function (e){
 			switch(String.fromCharCode(e.keyCode || e.charCode)){
 				case "l":load();break;
 				case "p":play();break;
+				case "s":stop();break;
+				case "f":forward();break;
+				case "b":backwards();break;
 			}
 		},false);
 
-
-//----- more old code----------
-function ajaxFeed(func,url){
-	ajax=new XMLHttpRequest();
-	ajax.open("GET",url,false);// not asyncronus
-	log("fetching file: %s",url)
-	ajax.send(null);
-	log("calling %s with %s content",[new String(func), url]);
-	return func(ajax.responseText);
-}
-Book=function (){}
-Book.prototype={
-	addSmil:function (smilUrl){
-		ajaxFeed(this._addSmil,smilUrl);
-	},
-	_addSmil:function (smilText){
-		document.body.textContent=smilText;
-	}
-}
-
-//----------------------old Code-------------------------
-function fetchSmils(smiles){
-	max=smiles.length
-	DaisyDlite.smiles=smiles;
-	recived=0;
-	DaisyDlite.progressBar.set("0%");
-	DaisyDlite.progressBar.message.innerHTML="Start Loading Smil Files..";
-	DaisyDlite.buffer={};
-	if(smiles==null || smiles==[]){
-		alert("error");
-		return;
-	}
-	for(i in smiles){
-		ajax=getAjax();
-		name=smiles[i]
-		function onreadystatechange(){
-			if(ajax.readyState==4){
-				DaisyDlite.buffer[name]=ajax.responseText;
-				recived+=1;
-				DaisyDlite.progressBar.set((100/max)*recived+"%");
-				if(recived=max){
-					DaisyDlite.progressBar.message.innerHTML="Recived all Smil Files crunching data...";
-					for(x in document.buffer){
-						DaisyDlite.buffer[x]=crunchSMIL(DaisyDlite.buffer[x]);
-					}
-					DaisyDlite.progressBar.message.innerHTML="Done crunching you can now Play";
-					DaisyDlite.number=recived;
-
-				}
-				else{
-					DaisyDlite.progressBar.message.textContent="Recived "+recived+" of "+max+" Smil Files";
-				}
-			}
-		}
-		ajax.onreadystatechange=onreadystatechange;
-		ajax.open("GET",smiles[i],false);
-		ajax.send(null);
-		//bar.style.width=100/max*(i+1)+"%";
-	}
-	}
-
-function stop(){
-	DaisyDlite.current.pause();
-}
-function crunchSMIL(smil){
-	smil=smil.toLowerCase();
-	smil=smil.replace(/clip-begin=/g,"start=");
-	smil=smil.replace(/clip-end=/g,"end=");
-	smil=smil.replace(/npt=(\d+\.\d)\d*s*/g,'$1')
-	return smil;
-}
-
-function extraxtSmilUrls(ncc){
-	document.ncc=ncc;
-	ret=ncc.match(/\w*.smil/g);
-	ret=ret.filter(function (a,i,t){return t.indexOf(a)==i;});
-	return ret!=null?ret:[];
-}
-//addEventListener("load",searchLocalDir,false);
