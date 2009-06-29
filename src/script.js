@@ -137,7 +137,6 @@ function loadSmileTest(nccList){
 					if(!(text in htmlHash)){
 						var html={};
 						var doc=loadSyncDoc(text);
-						log(doc);
 						var w=document.createTreeWalker(
 								doc,
 								NodeFilter.SHOW_ELEMENT,
@@ -176,7 +175,7 @@ function fillTOC(nccList){
 		var row=document.createElement("tr");
 		(function(){
 			var tmp=i;
-			row.onclick=function (){log("onclick:");play(nccList[tmp][0],nccList[tmp][1]);}
+			row.onclick=function (){play(nccList[tmp][0],nccList[tmp][1]);}
 		})();
 		var id=document.createElement("td");
 		id.textContent=nccList[i][1];
@@ -239,8 +238,7 @@ function skip(){
 	index=index+1;
 	var smilList=smil[1];
 	if(smilList[index][0]=="text"){
-		var text=smilList.map(function (e,i,a){return (e[0]=='text')?((i==index)?"<strong>"+htmls[e[1]][e[2]]+"</strong>":htmls[e[1]][e[2]]):undefined}).join(" ");
-		TEXTDISPLAY.innerHTML=text;//htmls[smilList[index][1]][smilList[index][2]]
+		loadText(smilList,5);
 		index=index+1;
 		AUDIOPLAYER.src=smilList[index][1];
 	}else if (smilList[index][0]="audio"){
@@ -251,6 +249,24 @@ function skip(){
 function stop(){
 	AUDIOPLAYER.pause();
 }
+function loadText(smilList,width){
+		function f(e,i,a){
+			return (e[0]=='text')?e.concat(i==index):undefined;
+		}
+		function m(e,i,a){
+				var alpha=1-Math.abs((i/a.length)-0.5);//Fix me: wrong opacity in begining and end of smil
+				return (e[3])?"<strong>"+htmls[e[1]][e[2]]+"</strong>":"<font color='rgba(0,0,0,"+alpha*0.8+")'>"+htmls[e[1]][e[2]]+"</font>";
+		}
+		var a=smilList.map(f);
+		a=a.filter(function (e){return e});
+		if(width){
+			var I;
+			a.forEach(function (e,i,a){if(e[3]==true)I=i});
+			a=a.slice(Math.max(new Number(I)-width,0),Math.min(new Number(I)+width,a.length));
+		}
+		var text=a.map(m).join("<br>");
+		TEXTDISPLAY.innerHTML=text;//htmls[smilList[index][1]][smilList[index][2]]
+}
 function loadID(file,id){	
 	AUDIOPLAYER.pause();
 	smil=smils[file];
@@ -258,8 +274,7 @@ function loadID(file,id){
 	var smilList=smil[1];
 	index=indexDict[id];
 	if(smilList[index][0]=="text"){
-		var text=smilList.map(function (e,i,a){return (e[0]=='text')?((i==index)?"<strong>"+htmls[e[1]][e[2]]+"</strong>":htmls[e[1]][e[2]]):undefined}).join(" ");
-		TEXTDISPLAY.innerHTML=text;//htmls[smilList[index][1]][smilList[index][2]]
+		loadText(smilList,5);
 		index=index+1;
 		AUDIOPLAYER.src=smilList[index][1];
 	}else if (smilList[index][0]="audio"){
@@ -277,7 +292,7 @@ window.addEventListener("keypress",function (e){
 				case "p":play();break;
 				case "s":stop();break;
 				case "f":forward();break;
-				case "b":backwards();break;
+				case "b":backward();break;
 			}
 		},false);
 
