@@ -61,7 +61,7 @@ function loadSyncDoc(src){
 	var ajax=getAjax();
 	ajax.open("GET",src,false);
 	ajax.send(null);
-	return ajax.responseXML
+	return ajax.responseXML || (new DOMParser()).parseFromString(ajax.responseText,"text/xml");
 }
 function loadNCCTest(){
 	var doc= loadSyncDoc(basePath+"ncc.html");
@@ -129,8 +129,8 @@ function loadSmileTest(nccList){
 					smil[smil.length]=[
 						"audio",
 						basePath+walker.currentNode.getAttribute("src"),
-						new Number(walker.currentNode.getAttribute("clip-begin").split("npt=")[1]),
-						new Number(walker.currentNode.getAttribute("clip-end").split("npt=")[1]),
+						new Number(walker.currentNode.getAttribute("clip-begin").split("npt=")[1].split("s")[0]),
+						new Number(walker.currentNode.getAttribute("clip-end").split("npt=")[1].split("s")[0]),
 					];
 				}else if(walker.currentNode.tagName.toLowerCase()=="text"){
 					var text=basePath+walker.currentNode.getAttribute("src").split("#")[0];
@@ -227,26 +227,28 @@ function load(){
 }
 function play(file,id){
 	if (id==undefined && file==undefined){
-		AUDIOPLAYER.play();
+		index-=1;
+		skip();
 		return;
 	}
 	loadID(file,id);
-	log("start playing id:%s",id);
 }
 function skip(){
+	if(AUDIOPLAYER.timeOut)clearTimeout(AUDIOPLAYER.timeOut);
 	AUDIOPLAYER.pause();
 	index=index+1;
 	var smilList=smil[1];
 	if(smilList[index][0]=="text"){
 		loadText(smilList,5);
 		index=index+1;
-		AUDIOPLAYER.src=smilList[index][1];
+		loadAudio(smilList);
 	}else if (smilList[index][0]="audio"){
-		AUDIOPLAYER.src=smilList[index][1];
+		loadAudio(smilList);
 	}
 	AUDIOPLAYER.play();
 }
 function stop(){
+	if(AUDIOPLAYER.timeOut)clearTimeout(AUDIOPLAYER.timeOut);
 	AUDIOPLAYER.pause();
 }
 function loadText(smilList,width){
@@ -267,8 +269,31 @@ function loadText(smilList,width){
 		var text=a.map(m).join("<br>");
 		TEXTDISPLAY.innerHTML=text;//htmls[smilList[index][1]][smilList[index][2]]
 }
+function loadAudio(smilList){
+			if(AUDIOPLAYER.timeOut)clearTimeout(AUDIOPLAYER.timeOut);
+			AUDIOPLAYER.pause();
+			function wait(){
+				if(AUDIOPLAYER.readyState==4){
+					log("readyState==4");
+					AUDIOPLAYER.currentTime=smilList[index][2];
+					AUDIOPLAYER.play();
+					if(AUDIOPLAYER.timeOut)clearTimeout(AUDIOPLAYER.timeOut);
+					AUDIOPLAYER.timeOut=setTimeout(skip,(smilList[index][3]-smilList[index][2])*1000);
+				}
+				else{
+					log("readyState=="+AUDIOPLAYER.readyState+" i.e. not 4");
+					AUDIOPLAYER.pause();
+				}
+			}
+			AUDIOPLAYER.src=smilList[index][1];
+			AUDIOPLAYER.pause();
+			AUDIOPLAYER.onload=wait;
+			AUDIOPLAYER.load();
+			try{
+				wait();
+			}catch(err){}
+}
 function loadID(file,id){	
-	AUDIOPLAYER.pause();
 	smil=smils[file];
 	var indexDict=smil[0];
 	var smilList=smil[1];
@@ -276,11 +301,10 @@ function loadID(file,id){
 	if(smilList[index][0]=="text"){
 		loadText(smilList,5);
 		index=index+1;
-		AUDIOPLAYER.src=smilList[index][1];
+		loadAudio(smilList);
 	}else if (smilList[index][0]="audio"){
-		AUDIOPLAYER.src=smilList[index][1];
+		loadAudio(smilList);
 	}
-	AUDIOPLAYER.play();
 }
 window.addEventListener("keypress",function (e){
 			e=e || window.event;
@@ -290,7 +314,7 @@ window.addEventListener("keypress",function (e){
 			switch(String.fromCharCode(e.keyCode || e.charCode)){
 				case "l":load();break;
 				case "p":play();break;
-				case "s":stop();break;
+				case "s":skip();break;
 				case "f":forward();break;
 				case "b":backward();break;
 			}

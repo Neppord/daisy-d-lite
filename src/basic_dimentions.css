@@ -47,3 +47,8 @@ fieldset div div{
 	padding:7pt;
 	margin: 0;
 }
+#textDisplay{
+	vertical-align:middle;
+	overflow:hide;
+	max-height:10em;
+}
