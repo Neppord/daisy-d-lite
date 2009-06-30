@@ -256,23 +256,23 @@ function loadText(smilList,width){
 			return (e[0]=='text')?e.concat(i==index):undefined;
 		}
 		function m(e,i,a){
-				var alpha=1-Math.abs((i/a.length)-0.5);//Fix me: wrong opacity in begining and end of smil
-				return (e[3])?"<strong>"+htmls[e[1]][e[2]]+"</strong>":"<font color='rgba(0,0,0,"+alpha*0.8+")'>"+htmls[e[1]][e[2]]+"</font>";
+				var alpha=1-Math.abs((i/a.length-0.5))*2;//Fix me: wrong opacity in begining and end of smil
+				return (e[3])?"<strong>"+htmls[e[1]][e[2]]+"</strong>":"<font color='rgba(0,0,0,"+alpha*1+")'>"+htmls[e[1]][e[2]]+"</font>";
 		}
 		var a=smilList.map(f);
 		a=a.filter(function (e){return e});
 		if(width){
 			var I;
 			a.forEach(function (e,i,a){if(e[3]==true)I=i});
-			a=a.slice(Math.max(new Number(I)-width,0),Math.min(new Number(I)+width,a.length));
+			a=a.slice(Math.max(new Number(I)-width,0),Math.min(new Number(I)+width+1,a.length));
 		}
 		var text=a.map(m).join("<br>");
 		TEXTDISPLAY.innerHTML=text;//htmls[smilList[index][1]][smilList[index][2]]
 }
 function loadAudio(smilList){
 			if(AUDIOPLAYER.timeOut)clearTimeout(AUDIOPLAYER.timeOut);
-			AUDIOPLAYER.pause();
 			function wait(){
+				AUDIOPLAYER.pause();
 				if(AUDIOPLAYER.readyState==4){
 					log("readyState==4");
 					AUDIOPLAYER.currentTime=smilList[index][2];
@@ -286,9 +286,9 @@ function loadAudio(smilList){
 				}
 			}
 			AUDIOPLAYER.src=smilList[index][1];
+			if(AUDIOPLAYER.src!=AUDIOPLAYER.currentSrc)AUDIOPLAYER.load();
 			AUDIOPLAYER.pause();
 			AUDIOPLAYER.onload=wait;
-			AUDIOPLAYER.load();
 			try{
 				wait();
 			}catch(err){}
