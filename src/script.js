@@ -30,8 +30,7 @@ smils={};
 htmls={};
 smil=[{},[]];//fixme: refactor to a better name, this is the current smil.
 index=0;
-basePath="media/";
-
+if(!window.basePath)basePath="media/";//sets but dossent over write
 // Constants
 
 function loadConstants (){
@@ -224,8 +223,10 @@ function load(){
 	fillTOC(a[0]);
 	smils=a[1];
 	htmls=a[2];
+	if($("state")){$("state").setAttribute("data-state","on");}
 }
 function play(file,id){
+	if($("state")){$("state").setAttribute("data-state","playing");}
 	if (id==undefined && file==undefined){
 		index-=1;
 		skip();
@@ -250,6 +251,7 @@ function skip(){
 function stop(){
 	if(AUDIOPLAYER.timeOut)clearTimeout(AUDIOPLAYER.timeOut);
 	AUDIOPLAYER.pause();
+	if($("state")){$("state").setAttribute("data-state","on");}
 }
 function loadText(smilList,width){
 		function f(e,i,a){
@@ -305,6 +307,7 @@ function loadID(file,id){
 	}else if (smilList[index][0]="audio"){
 		loadAudio(smilList);
 	}
+	if($("state")){$("state").setAttribute("data-state","playing");}
 }
 window.addEventListener("keypress",function (e){
 			e=e || window.event;
