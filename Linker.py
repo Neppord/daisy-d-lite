@@ -1,4 +1,5 @@
 import sys
+import os
 import mimetypes
 import base64
 import StringIO
@@ -8,9 +9,9 @@ def Link(infile,outfile):
 	s=infile.read()
 	lis=findURLs(s,mime)
 	for name in lis: 
-		f=open(name+".url");
+		f=open(os.path.join(os.path.dirname(infile.name),name+".url"));
 		fs=f.read()
-		s=s.replace(name,fs)
+		s=s.replace(name,fs.replace("\n",""))
 	outfile.write(s)
 
 def findURLs(string,mime):
@@ -19,8 +20,8 @@ def findURLs(string,mime):
 	ret+=map(lambda x:x[6:-1],re.findall(r"href='.*?'",string));
 	ret+=map(lambda x:x[5:-1],re.findall(r'src=".*?"',string));
 	ret+=map(lambda x:x[5:-1],re.findall(r"src='.*?'",string));
-	ret+=map(lambda x:x[4:-1],re.findall(r"'url(.*?)'",string));
-	ret+=map(lambda x:x[4:-1],re.findall(r'"url(.*?)"',string));
+	ret+=map(lambda x:x[5:-2],re.findall(r"url\('.*?'\)",string));
+	ret+=map(lambda x:x[5:-2],re.findall(r'url\(".*?"\)',string));
 	return ret;
 
 if __name__=="__main__":
