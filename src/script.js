@@ -1,8 +1,8 @@
-/*
-	 trying to do it old fasion way with out objects
- */
-
-
+if(!$){
+	function $(){
+		return document.getElementById.apply(document,arguments)
+	}
+}
 // datastructures
 /*
 	 smils a dict of the smils with key of the url
@@ -61,6 +61,117 @@ function loadSyncDoc(src){
 	ajax.open("GET",src,false);
 	ajax.send(null);
 	return ajax.responseXML || (new DOMParser()).parseFromString(ajax.responseText,"text/xml");
+}
+function loadTOC(){
+	var toc = document.createElement("ol");
+	toc.setAttribute("data-level","base");
+	var current = toc;
+	var levels = ["h1","h2","h3","h4","h5","h6","span"];
+	var doc = loadSyncDoc(basePath+"ncc.html");	
+	var walker = document.createTreeWalker(
+			doc,
+			NodeFilter.SHOW_ALL,
+			function (node){
+				if(node.tagName=="a"){
+					switch(node.parentNode.tagName){
+						case "h1":return NodeFilter.FILTER_ACCEPT;break;
+						case "h2":return NodeFilter.FILTER_ACCEPT;break;
+						case "h3":return NodeFilter.FILTER_ACCEPT;break;
+						case "h4":return NodeFilter.FILTER_ACCEPT;break;
+						case "h5":return NodeFilter.FILTER_ACCEPT;break;
+						case "h6":return NodeFilter.FILTER_ACCEPT;break;
+						case "span":return NodeFilter.FILTER_ACCEPT;break;
+					}
+				}
+				return NodeFilter.FILTER_SKIP;
+			},
+			false
+			);
+	function playThis(){
+		play(this.getAttribute("data-file"),this.getAttribute("data-id"));
+	}
+	function hideSub(){
+			togleHide(this.parentNode.getElementsByTagName("ol")[0]);
+			this.src=((this.parentNode.getElementsByTagName("ol")[0].style.display=="none")?"Images/closed.png":"Images/open.png");
+	}
+	while(walker.nextNode()){
+		while(levels.indexOf(current.getAttribute("data-level"))>=levels.indexOf(walker.currentNode.parentNode.tagName)){
+			current=current.parentNode.parentNode;
+		}
+		var li=document.createElement("li");
+		var ol=document.createElement("ol");
+		var a=document.createElement("a");
+		var span=document.createElement("img");
+		span.onclick=hideSub;
+		span.style.width="15px";
+		span.style.height="15px";
+		span.src="Images/closed.png"
+		li.appendChild(span);
+		ol.setAttribute("data-level",walker.currentNode.parentNode.tagName);
+		togleHide(ol);
+		a.textContent=walker.currentNode.textContent;
+		a.setAttribute("data-file",walker.currentNode.getAttribute("href").split("#")[0])
+		a.setAttribute("data-id",walker.currentNode.getAttribute("href").split("#")[1])
+		a.onclick=playThis;
+		li.appendChild(a);
+		li.appendChild(ol);
+		current.appendChild(li);
+		current=ol;
+	}
+	TOCDISPLAY.innerHTML="";
+	TOCDISPLAY.appendChild(toc);
+}
+function loadSmil(){
+	var toc=TOCDISPLAY.childNodes[0];
+	log("smils")
+	walker=document.createTreeWalker(
+			toc,
+			NodeFilter.SHOW_ALL,
+			function (node){
+				if(node.hasAttribute("data-file")){
+					return NodeFilter.FILTER_ACCEPT;
+				}
+				return NodeFilter.FILTER_SKIP;
+			},
+			false
+			);
+	while(walker.nextNode()){
+		var doc= loadSyncDoc(basePath+walker.currentNode.getAttribute("data-file"));
+		var w=document.createTreeWalker(
+				doc,
+				NodeFilter.SHOW_ALL,
+				function (node){
+					if(node.getAttribute("id") ||node.tagName=="audio" || node.tagName=="text"){
+						return NodeFilter.FILTER_ACCEPT;
+					}
+					return NodeFilter.FILTER_SKIP;
+				},
+				false);
+		while(w.nextNode() && w.currentNode.getAttribute("id")!=walker.currentNode.getAttribute("data-id")){}
+		while(w.currentNode){
+			if(w.currentNode.getAttribute("id")!=walker.nextNode().getAttribute("data-id")){
+				walker.previousNode();
+			}
+			switch(w.currentNode.tagName){
+				case "audio":{
+					var li=document.createElement("li");
+					li.setAttribute("data-type",w.currentNode.tagName);
+					li.setAttribute("data-src",basePath+w.currentNode.getAttribute("src"));
+					li.setAttribute("data-start",w.currentNode.getAttribute("clip-begin").split("npt=")[1].split("s")[0]);
+					li.setAttribute("data-stop",w.currentNode.getAttribute("clip-end").split("npt=")[1].split("s")[0]);
+					walker.currentNode.nextSibling.appendChild(li);
+				};break
+				case "text":{
+					var li=document.createElement("li");
+					li.setAttribute("data-type",w.currentNode.tagName);
+					li.setAttribute("data-src",basePath+w.getAttribute("src").split("#")[0])
+					li.setAttribute("data-id",w.getAttribute("src").split("#")[1])
+					walker.currentNode.nextSibling.appendChild(li);
+				};break
+			}
+		w.nextNode();
+		}
+	}
 }
 function loadNCCTest(){
 	var doc= loadSyncDoc(basePath+"ncc.html");
@@ -165,31 +276,6 @@ function loadSmileTest(nccList){
 	}
 	return [smilHash,htmlHash];
 }
-function fillTOC(nccList){
-	var table=document.createElement("table");
-	var tbody=document.createElement("tbody");
-	table.appendChild(tbody);
-	var stack=[];
-	for(i in nccList){
-		var row=document.createElement("tr");
-		(function(){
-			var tmp=i;
-			row.onclick=function (){play(nccList[tmp][0],nccList[tmp][1]);}
-		})();
-		var id=document.createElement("td");
-		id.textContent=nccList[i][1];
-		var tag=document.createElement("td");
-		tag.textContent=nccList[i][2];
-		var text=document.createElement("td");
-		text.textContent=nccList[i][3];
-		row.appendChild(tag);
-		row.appendChild(id);
-		row.appendChild(text);
-		tbody.appendChild(row);
-	}
-	TOCDISPLAY.innerHTML="";
-	TOCDISPLAY.appendChild(table);
-}
 function loadTest(){
 	var nccList=loadNCCTest();
 	var tmp=loadSmileTest(nccList);
@@ -219,8 +305,10 @@ function loadNCC(){
 }
 //function bindings
 function load(){
+	//return loadAll();
 	var a=loadTest();
-	fillTOC(a[0]);
+	//fillTOC(a[0]);
+	loadTOC();
 	smils=a[1];
 	htmls=a[2];
 	if($("state")){$("state").setAttribute("data-state","on");}
