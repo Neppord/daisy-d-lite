@@ -9,7 +9,7 @@ def Link(infile,outfile):
 	s=infile.read()
 	lis=findURLs(s,mime)
 	for name in lis: 
-		f=open(os.path.join(os.path.dirname(infile.name),name+".url"));
+		f=open(os.path.join(os.path.dirname(outfile.name),name+".url"));
 		fs=f.read()
 		s=s.replace(name,fs.replace("\n",""))
 	outfile.write(s)
@@ -25,4 +25,7 @@ def findURLs(string,mime):
 	return ret;
 
 if __name__=="__main__":
-	Link(file(sys.argv[1],"rb"),file(sys.argv[1]+".link","w"))
+	if len(sys.argv)<=2:
+		Link(file(sys.argv[1],"rb"),file(sys.argv[1]+".link","w"))
+	else:
+		Link(file(sys.argv[1],"rb"),file(sys.argv[2],"w"))

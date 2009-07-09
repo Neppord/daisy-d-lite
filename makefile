@@ -12,65 +12,77 @@ vpath %.link	build
 vpath %.url	build
 
 all: dist
+.PHONY:dist
 dist: build
+	-mkdir dist/
 	cp build/index.html.link dist/index.html
-build: index.html.link
+.PHONY:build
+build: build/index.html.link
 .PHONY:clean
 clean:
-	-rm -r build/* dist/*
-%.link:%
-	python Linker.py $< $@
-%.url:%.link
+	-rm -r build/ dist/
+.PHONY:configure
+configure:
+	python config.py
+build/%/:src/%/
+	mkdir -p $@
+#%.link:%
+#	python Linker.py $< $@
+build/%.url:build/%.link
 	python Assambler.py $< $@
 #dependecis for file src/index.html
-index.html.link: index.html UI.css.url env.js.url UI.js.url script.js.url
+build/index.html.link: index.html build/UI.css.url build/env.js.url build/UI.js.url build/script.js.url
 	python Linker.py $< $@
 
 #dependecis for file src/UI.css
-UI.css.link: UI.css Images/on.png.url Images/play.png.url Images/pause.png.url Images/left.png.url Images/right.png.url Images/up.png.url Images/down.png.url
+build/UI.css.link: UI.css build/Images/on.png.url build/Images/play.png.url build/Images/pause.png.url build/Images/left.png.url build/Images/right.png.url build/Images/up.png.url build/Images/down.png.url
 	python Linker.py $< $@
 
 #dependecis for file src/Images/on.png
-Images/on.png.link: Images/on.png 
+build/Images/on.png.link: Images/on.png  build/Images
 	python Linker.py $< $@
 
 #dependecis for file src/Images/play.png
-Images/play.png.link: Images/play.png 
+build/Images/play.png.link: Images/play.png  build/Images
 	python Linker.py $< $@
 
 #dependecis for file src/Images/pause.png
-Images/pause.png.link: Images/pause.png 
+build/Images/pause.png.link: Images/pause.png  build/Images
 	python Linker.py $< $@
 
 #dependecis for file src/Images/left.png
-Images/left.png.link: Images/left.png 
+build/Images/left.png.link: Images/left.png  build/Images
 	python Linker.py $< $@
 
 #dependecis for file src/Images/right.png
-Images/right.png.link: Images/right.png 
+build/Images/right.png.link: Images/right.png  build/Images
 	python Linker.py $< $@
 
 #dependecis for file src/Images/up.png
-Images/up.png.link: Images/up.png 
+build/Images/up.png.link: Images/up.png  build/Images
 	python Linker.py $< $@
 
 #dependecis for file src/Images/down.png
-Images/down.png.link: Images/down.png 
+build/Images/down.png.link: Images/down.png  build/Images
 	python Linker.py $< $@
 
 #dependecis for file src/env.js
-env.js.link: env.js 
+build/env.js.link: env.js 
 	python Linker.py $< $@
 
 #dependecis for file src/UI.js
-UI.js.link: UI.js 
+build/UI.js.link: UI.js 
 	python Linker.py $< $@
 
 #dependecis for file src/script.js
-script.js.link: script.js Images/closed.png.url
+build/script.js.link: script.js build/Images/open.png.url build/Images/closed.png.url
+	python Linker.py $< $@
+
+#dependecis for file src/Images/open.png
+build/Images/open.png.link: Images/open.png  build/Images
 	python Linker.py $< $@
 
 #dependecis for file src/Images/closed.png
-Images/closed.png.link: Images/closed.png 
+build/Images/closed.png.link: Images/closed.png  build/Images
 	python Linker.py $< $@
 

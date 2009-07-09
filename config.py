@@ -11,7 +11,7 @@ def makeMakefile(f,url):
 	base=os.path.dirname(url)
 	deps=findURLs(thisf.read(),mime)
 	url=url[4:]# removes the src/
-	f.write(url+".link: "+url+" "+" ".join(map(lambda a:os.path.join(base[4:],a)+".url",deps))+"\n")
+	f.write("build/"+url+".link: "+url+" "+" ".join(map(lambda a:os.path.join("build"+base[3:],a)+".url",deps))+(base[4:] and " build/"+base[4:])+"\n")
 	f.write("	python Linker.py $< $@\n\n")
 	for d in deps:
 		makeMakefile(f,os.path.join(base,d))
@@ -41,15 +41,23 @@ vpath %.link	build
 vpath %.url	build
 
 all: dist
+.PHONY:dist
 dist: build
+	-mkdir dist/
 	cp build/index.html.link dist/index.html
-build: index.html.link
+.PHONY:build
+build: build/index.html.link
 .PHONY:clean
 clean:
-	-rm -r build/* dist/*
-%.link:%
-	python Linker.py $< $@
-%.url:%.link
+	-rm -r build/ dist/
+.PHONY:configure
+configure:
+	python config.py
+build/%/:src/%/
+	mkdir -p $@
+#%.link:%
+#	python Linker.py $< $@
+build/%.url:build/%.link
 	python Assambler.py $< $@
 """)
 	makeMakefile(f,"src/index.html")

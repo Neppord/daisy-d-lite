@@ -1,3 +1,4 @@
+//urls
 if(!$){
 	function $(){
 		return document.getElementById.apply(document,arguments)
@@ -92,7 +93,7 @@ function loadTOC(){
 	}
 	function hideSub(){
 			togleHide(this.parentNode.getElementsByTagName("ol")[0]);
-			this.src=((this.parentNode.getElementsByTagName("ol")[0].style.display=="none")?"Images/closed.png":"Images/open.png");
+			this.src=((this.parentNode.getElementsByTagName("ol")[0].style.display=="none")?this.closed_src:this.open_src);
 	}
 	while(walker.nextNode()){
 		while(levels.indexOf(current.getAttribute("data-level"))>=levels.indexOf(walker.currentNode.parentNode.tagName)){
@@ -101,20 +102,22 @@ function loadTOC(){
 		var li=document.createElement("li");
 		var ol=document.createElement("ol");
 		var a=document.createElement("a");
-		var span=document.createElement("img");
-		span.onclick=hideSub;
-		span.style.width="15px";
-		span.style.height="15px";
-		span.src="Images/closed.png"
-		li.appendChild(span);
+		var img=document.createElement("img");
+		img.onclick=hideSub;
+		img.style.width="15px";
+		img.style.height="15px";
+		img.open_src="Images/open.png";
+		img.closed_src="Images/closed.png";
+		img.src=img.open_src;
+		li.appendChild(img);
 		ol.setAttribute("data-level",walker.currentNode.parentNode.tagName);
-		togleHide(ol);
 		a.textContent=walker.currentNode.textContent;
 		a.setAttribute("data-file",walker.currentNode.getAttribute("href").split("#")[0])
 		a.setAttribute("data-id",walker.currentNode.getAttribute("href").split("#")[1])
 		a.onclick=playThis;
 		li.appendChild(a);
 		li.appendChild(ol);
+		img.onclick();
 		current.appendChild(li);
 		current=ol;
 	}
