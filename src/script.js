@@ -4,36 +4,7 @@ if(!$){
 		return document.getElementById.apply(document,arguments)
 	}
 }
-// datastructures
-/*
-	 smils a dict of the smils with key of the url
-	 and value as indexDict and smilLists
-	 */
-smils={};
-/* smilList:
-	 Audio Element
-			list with index:
-				0 - "audio"
-				1 - url of file
-				2 - start of clip
-				3 - end of clip
-	Text Element:
-			List with index:
-				0 - "text"
-				1 - the text
-	indexDict:
-		key id in the paired smile valus are indexes in the smil List for that tags content 
- */
-/*
-	 htmls a dict of the html documents with key of the url
-	 and value as id->text mapping
-	 */
-htmls={};
-smil=[{},[]];//fixme: refactor to a better name, this is the current smil.
-index=0;
 if(!window.basePath)basePath="media/";//sets but dossent over write
-// Constants
-
 function loadConstants (){
 	TEXTDISPLAY=document.getElementById("textDisplay");
 	TOCDISPLAY=document.getElementById("tocDisplay")
@@ -174,37 +145,17 @@ function loadSmil(){
 			}
 		}while(w.nextNode())
 	}
-}
-function loadNCCTest(){
-	var doc= loadSyncDoc(basePath+"ncc.html");
-	var a=new Array();
-	var walker = document.createTreeWalker(
-			doc,
-			NodeFilter.SHOW_ALL,
+	window.playlist=document.createTreeWalker(TOCDISPLAY,NodeFilter.SHOW_ELEMENT,
 			function (node){
-				if(node.tagName=="a"){
-					switch(node.parentNode.tagName){
-						case "h1":return NodeFilter.FILTER_ACCEPT;break;
-						case "h2":return NodeFilter.FILTER_ACCEPT;break;
-						case "h3":return NodeFilter.FILTER_ACCEPT;break;
-						case "h4":return NodeFilter.FILTER_ACCEPT;break;
-						case "h5":return NodeFilter.FILTER_ACCEPT;break;
-						case "h6":return NodeFilter.FILTER_ACCEPT;break;
-						case "span":return NodeFilter.FILTER_ACCEPT;break;
-					}
+				if(node.tagName.toLowerCase()=="li" && node.hasAttribute("data-type")){
+					return NodeFilter.FILTER_ACCEPT;
 				}
-				return NodeFilter.FILTER_SKIP;
-			},
-			false
-			);
-	while(walker.nextNode()){
-		//FIXME problem if href is "somthing#somthin#somting"
-		var l=walker.currentNode.getAttribute("href").split("#");
-		l[l.length]=walker.currentNode.parentNode.tagName;
-		l[l.length]=walker.currentNode.textContent;//should it be HTML?
-		a[a.length]=l;
-	}
-	return a;
+				else{
+					return NodeFilter.FILTER_SKIP;
+				}
+			}
+			,false);
+	playlist.nextNode();
 }
 function loadSmileTest(nccList){
 	var smilHash={};
@@ -278,41 +229,8 @@ function loadSmileTest(nccList){
 	}
 	return [smilHash,htmlHash];
 }
-function loadTest(){
-	var nccList=loadNCCTest();
-	var tmp=loadSmileTest(nccList);
-	return [nccList,tmp[0],tmp[1]];
-}
-function setProgress(width){
-PROGRESS.style.width=width;
-}
-function setProgressMsg(s){
-	PROGRESSDISPLAY.innerHTML=String(s);
-}
-function loadNCC(){
-	setProgressMsg("Loading Ncc..");
-	setProgress("0%");
-	var file=loadSyncFile(basePath+"ncc.html")	
-	setProgress("25%");
-	file=file.replace(/(?:.|\n)*<body>((?:.|\n)*)<\/body>(?:.|\n)*/gim,"$1");
-	setProgress("50%");
-	file=file.replace(
-			/<a(.*)href=("?'?)(.*\#.*)\2(.*)>(.*)<\/a>/g,
-			"<span $1onClick=\"play(\'$3\')\;\"$4>$5<\/span>"
-			);
-	setProgress("75%");
-	TOCDISPLAY.innerHTML=file;
-	setProgress("100%");
-	setProgressMsg("Ncc Loaded");
-}
-//function bindings
 function load(){
-	//return loadAll();
-	//var a=loadTest();
-	//fillTOC(a[0]);
 	loadTOC();
-	//smils=a[1];
-	//htmls=a[2];
 	if($("state")){$("state").setAttribute("data-state","on");}
 	loadSmil();
 }
