@@ -7,7 +7,7 @@
 		<script type="application/x-javascript" src="script.js"></script>
 		<link rel="stylesheet" type="text/css" href="UI.css" />
 	</head>
-	<body onload="loadConstants();">
+	<body onload="loadConstants();if(location.search){load();loadID(/file=([^&]*)/(location.search)[1],/id=([^&]*)/(location.search)[1])}">
 		<audio id="audioPlayer">
 
 		<h1 text="red">The audio Tag is not working, there for this application will not function correctly!<br /> Try using Safari or a nother browser supporting HTML5 and the mp3 standard.</h1>
@@ -66,6 +66,9 @@
 					<div>
 						<strong>Volume:</strong> <input id="volume" value='1' size="3" onchange="AUDIOPLAYER.volume=this.value;"/>
 						<strong>Speed:</strong> <input id="speed" value='1' size="3" onchange="AUDIOPLAYER.playbackRate=this.value;playlist.previousNode();skip()"/>
+					</div>
+					<div>
+						<strong>Book Mark:</strong> <a id="bookmark" href="?id=test&fiel=name">Book mark</a>
 					</div>
 				</td>
 				<td height="40%" id="icon">

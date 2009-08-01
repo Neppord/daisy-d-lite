@@ -13,7 +13,7 @@ td[data-state="playing"]{
 }
 #status div{
 	margin: 0.5em;
-	padding: 1em;
+	padding: 0.5em;
 	border:solid 1px;
 }
 #left{

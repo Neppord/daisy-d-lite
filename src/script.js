@@ -232,6 +232,9 @@ function skip(){
 	}
 	AUDIOPLAYER.play();
 	AUDIOPLAYER.playbackRate=SPEED.value;
+	var id=playlist.currentNode.parentElement.previousSibling.getAttribute("data-id");
+	var file=playlist.currentNode.parentElement.previousSibling.getAttribute("data-file");
+	$('bookmark').setAttribute("href","?id="+id+"&file="+file);
 }
 function forward(){
 	if($("level").innerText=="skip"){
@@ -377,6 +380,7 @@ function loadAudio(){
 			AUDIOPLAYER.playbackRate=SPEED.value;
 }
 function loadID(file,id){	
+	$('bookmark').setAttribute("href","?id="+id+"&file="+file)
 	playlist.currentNode=TOCDISPLAY.querySelector("[data-id='"+id+"'][data-file='"+file+"']");
 	playlist.nextNode();
 	if(playlist.currentNode.getAttribute("data-type")=="text"){
