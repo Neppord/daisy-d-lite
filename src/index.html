@@ -8,6 +8,11 @@
 		<link rel="stylesheet" type="text/css" href="UI.css" />
 	</head>
 	<body onload="loadConstants();">
+		<audio id="audioPlayer">
+
+		<h1 text="red">The audio Tag is not working, there for this application will not function correctly!<br /> Try using Safari or a nother browser supporting HTML5 and the mp3 standard.</h1>
+		</audio>
+		<a href="../License.txt">License of Daisy (D)Lite</a>
 		<table width="100%" height="100%">
 			<tr id="controles">
 				<td rowspan=3 width="20%" id="tocCell" height="100%">
@@ -23,13 +28,13 @@
 						<tr>
 							<td>
 							</td>
-							<td>
+							<td onclick="up();">
 								<div width="100px" height="100px" id="up"></div>
 							</td>
 							<td></td>
 						</tr>
 						<tr>
-							<td >
+							<td onclick="backward();">
 								<div width="100px" height="100px"id="left"></div>
 							</td>
 							<td data-state="off" id="state" onclick="
@@ -40,13 +45,13 @@
 									}">
 								<div width="100px" height="100px"></div>
 							</td>
-							<td onclick="skip();">
+							<td onclick="forward();">
 								<div id="right" width="100px" height="100px"></div>
 							</td>
 						</tr>
 						<tr>
 							<td></td>
-							<td>
+							<td onclick="down();">
 								<div id="down" width="100px" height="100px"></div>
 							</td>
 							<td></td>
@@ -54,6 +59,12 @@
 					</table>
 				</td>
 				<td height="40%" id="status">
+				<div id="title">Book Title</div>
+				<div id="creator">creator</div>
+				<div id="totalTime">Total Time</div>
+				<div id="level">h1</div>
+				<div>Book Title</div>
+				<div>Book Title</div>
 				</td>
 				<td height="40%" id="icon">
 				</td>
@@ -70,6 +81,5 @@
 			</tr>
 				
 		</table>
-		<audio id="audioPlayer">Not Woking</audio>
 	</body>
 </html>

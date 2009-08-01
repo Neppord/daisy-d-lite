@@ -3,18 +3,19 @@ import getopt
 import os
 import mimetypes
 from Linker import findURLs
+sep="/"
 
 def makeMakefile(f,url):
 	f.write("#dependecis for file "+url+"\n")
 	thisf=open(url,"rb")
 	mime=mimetypes.guess_type(url)[0]
 	base=os.path.dirname(url)
-	deps=findURLs(thisf.read(),mime)
+	deps=map(lambda x:sep.join(x.split("/")),findURLs(thisf.read(),mime))
 	url=url[4:]# removes the src/
-	f.write("build/"+url+".link: "+url+" "+" ".join(map(lambda a:os.path.join("build"+base[3:],a)+".url",deps))+(base[4:] and " build/"+base[4:])+"\n")
+	f.write("build/"+url.lstrip("./")+".link: "+url.lstrip("./")+" "+" ".join(map(lambda a:sep.join(["build"+base[3:].lstrip("./"),a.lstrip("./")])+".url",deps))+(" build/"+base[4:].lstrip("./"))+"\n")
 	f.write("	python Linker.py $< $@\n\n")
 	for d in deps:
-		makeMakefile(f,os.path.join(base,d))
+		makeMakefile(f,sep.join([base,d]))
 
 
 if __name__=="__main__":

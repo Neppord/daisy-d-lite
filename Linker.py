@@ -9,19 +9,19 @@ def Link(infile,outfile):
 	s=infile.read()
 	lis=findURLs(s,mime)
 	for name in lis: 
-		f=open(os.path.join(os.path.dirname(outfile.name),name+".url"));
+		f=open("/".join([os.path.dirname(outfile.name).lstrip("./"),name.lstrip("./")+".url"]));
 		fs=f.read()
 		s=s.replace(name,fs.replace("\n",""))
 	outfile.write(s)
 
 def findURLs(string,mime):
 	ret=[]
-	ret+=map(lambda x:x[6:-1],re.findall(r'href=".*?"',string));
-	ret+=map(lambda x:x[6:-1],re.findall(r"href='.*?'",string));
-	ret+=map(lambda x:x[5:-1],re.findall(r'src=".*?"',string));
-	ret+=map(lambda x:x[5:-1],re.findall(r"src='.*?'",string));
-	ret+=map(lambda x:x[5:-2],re.findall(r"url\('.*?'\)",string));
-	ret+=map(lambda x:x[5:-2],re.findall(r'url\(".*?"\)',string));
+	ret+=map(lambda x:x[7:-1],re.findall(r'\shref=".*?"',string));
+	ret+=map(lambda x:x[7:-1],re.findall(r"\sref='.*?'",string));
+	ret+=map(lambda x:x[6:-1],re.findall(r'\ssrc=".*?"',string));
+	ret+=map(lambda x:x[6:-1],re.findall(r"\ssrc='.*?'",string));
+	ret+=map(lambda x:x[6:-2],re.findall(r"\surl\('.*?'\)",string));
+	ret+=map(lambda x:x[6:-2],re.findall(r'\surl\(".*?"\)',string));
 	return ret;
 
 if __name__=="__main__":

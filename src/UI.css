@@ -3,31 +3,31 @@ li[data-type=text],li[data-type=audio]{
 }
 td{background-color:#9999FF;}
 td[data-state="off"]{
-	background-image:url('Images/on.png');
+	background-image: url('Images/on.png');
 }
 td[data-state="on"]{
-	background-image:url('Images/play.png');
+	background-image: url('Images/play.png');
 }
 td[data-state="playing"]{
-	background-image:url('Images/pause.png');
+	background-image: url('Images/pause.png');
 }
 #left{
-	background-image:url('Images/left.png');
+	background-image: url('Images/left.png');
 	height:100px;
 	width:100px;
 }
 #right{
-	background-image:url('Images/right.png');
+	background-image: url('Images/right.png');
 	height:100px;
 	width:100px;
 }
 #up{
-	background-image:url('Images/up.png');
+	background-image: url('Images/up.png');
 	height:100px;
 	width:100px;
 }
 #down{
-	background-image:url('Images/down.png');
+	background-image: url('Images/down.png');
 	height:100px;
 	width:100px;
 }
