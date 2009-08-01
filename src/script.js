@@ -14,6 +14,8 @@ function loadConstants (){
 	TITLE=$("title");
 	CREATOR=$("creator");
 	TOTALTIME=$("totalTime");
+	SPEED=$('speed');
+	VOLUME=$('volume');
 
 }
 //functions
@@ -229,6 +231,7 @@ function skip(){
 		loadAudio();
 	}
 	AUDIOPLAYER.play();
+	AUDIOPLAYER.playbackRate=SPEED.value;
 }
 function forward(){
 	if($("level").innerText=="skip"){
@@ -353,21 +356,25 @@ function loadAudio(){
 					log("readyState==4");
 					AUDIOPLAYER.currentTime=Number(node.getAttribute("data-start"))*1.0047;
 					AUDIOPLAYER.play();
+					AUDIOPLAYER.playbackRate=SPEED.value;
 					if(AUDIOPLAYER.timeOut)clearTimeout(AUDIOPLAYER.timeOut);
-					AUDIOPLAYER.timeOut=setTimeout(skip,(Number(node.getAttribute("data-stop"))-Number(node.getAttribute("data-start")))*1000);
+					AUDIOPLAYER.timeOut=setTimeout(skip,(Number(node.getAttribute("data-stop"))-Number(node.getAttribute("data-start")))*1000/SPEED.value);
 				}
 				else{
 					log("readyState=="+AUDIOPLAYER.readyState+" i.e. not 4");
 					AUDIOPLAYER.pause();
 				}
+				AUDIOPLAYER.playbackRate=SPEED.value;
 			}
 			AUDIOPLAYER.src=node.getAttribute("data-src")
+			AUDIOPLAYER.playbackRate=SPEED.value;
 			if(AUDIOPLAYER.src!=AUDIOPLAYER.currentSrc && AUDIOPLAYER.load)AUDIOPLAYER.load();
 			AUDIOPLAYER.pause();
 			AUDIOPLAYER.onload=wait;
 			try{
 				wait();
 			}catch(err){}
+			AUDIOPLAYER.playbackRate=SPEED.value;
 }
 function loadID(file,id){	
 	playlist.currentNode=TOCDISPLAY.querySelector("[data-id='"+id+"'][data-file='"+file+"']");

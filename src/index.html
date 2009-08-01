@@ -63,6 +63,10 @@
 					<div><strong>Book Creator:</strong> <span id="creator">creator</span></div>
 					<div><strong>Book Total Time:</strong> <span id="totalTime">Total Time</span></div>
 					<div><strong>Navigation Level:</strong> <span id="level">h1</span></div>
+					<div>
+						<strong>Volume:</strong> <input id="volume" value='1' size="3" onchange="AUDIOPLAYER.volume=this.value;"/>
+						<strong>Speed:</strong> <input id="speed" value='1' size="3" onchange="AUDIOPLAYER.playbackRate=this.value;playlist.previousNode();skip()"/>
+					</div>
 				</td>
 				<td height="40%" id="icon">
 				</td>

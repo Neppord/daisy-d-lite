@@ -36,3 +36,6 @@ td[data-state="playing"]{
 	height:100px;
 	width:100px;
 }
+#down:active, #up:active, #left:active, #right:active, td[data-state]:active{
+	background-image: url('Images/Square_inverse.png');
+}
