@@ -11,6 +11,10 @@ function loadConstants (){
 	PROGRESSDISPLAY=document.getElementById("progressDisplay");
 	PROGRESS=document.getElementById("progress");
 	AUDIOPLAYER=document.getElementById("audioPlayer");
+	TITLE=$("title");
+	CREATOR=$("creator");
+	TOTALTIME=$("totalTime");
+
 }
 //functions
 
@@ -40,6 +44,10 @@ function loadTOC(){
 	var current = toc;
 	var levels = ["h1","h2","h3","h4","h5","h6","span"];
 	var doc = loadSyncDoc(basePath+"ncc.html");	
+	//setting info field;
+	TITLE.innerText=doc.querySelector("[name='dc:title']").getAttribute("content");
+	CREATOR.innerText=doc.querySelector("[name='dc:creator']").getAttribute("content");
+	TOTALTIME.innerText=doc.querySelector("[name='ncc:totalTime']").getAttribute("content");
 	var walker = document.createTreeWalker(
 			doc,
 			NodeFilter.SHOW_ELEMENT,
@@ -223,11 +231,11 @@ function skip(){
 	AUDIOPLAYER.play();
 }
 function forward(){
-	if($("level").innerText=="span"){
+	if($("level").innerText=="skip"){
 		skip();
 		return;
 	}
-	var l=["h1","h2","h3","h4","h5","h6"];
+	var l=["h1","h2","h3","h4","h5","h6","span"];
 	var i=l.indexOf($("level").innerText);
 	var w =document.createTreeWalker(TOCDISPLAY,
 			NodeFilter.SHOW_ELEMENT,
@@ -241,48 +249,56 @@ function forward(){
 	w.currentNode=playlist.currentNode;
 	while(l.indexOf(w.nextNode().getAttribute("data-level"))>i){}
 	playlist.currentNode=w.currentNode;
+	playlist.previousNode();
 	skip();
 }
 function backward(){
-	var l=["span","h1","h2","h3","h4","h5","h6"];
-	var i=l.indexOf($("level").innerText);
-	while(i>=0){
-		if(l[i]=="span"){
-			playlist.previousNode();
-			playlist.previousNode();
-			skip();
-		}else{
-			var list=TOCDISPLAY.querySelectorAll("[data-level="+l[i]+"]");
-			var p=0;
-			while(p<list.length && !list[p].contains(playlist.currentNode)){
-				p++;
-			}
-			if(!list[p].contains(playlist.currentNode)){
-				i--;
-				continue;
-			}
-			if(list[p-1]){
-				playlist.currentNode=list[p-1];
-				skip();
-			}
-		}
-		break;
+	if($("level").innerText=="skip"){
+		playlist.previousNode();
+		playlist.previousNode();
+		playlist.previousNode();
+		skip();
+		return;
 	}
-
-}
-function up(){
 	var l=["h1","h2","h3","h4","h5","h6","span"];
 	var i=l.indexOf($("level").innerText);
+	var w =document.createTreeWalker(TOCDISPLAY,
+			NodeFilter.SHOW_ELEMENT,
+			function(node){
+				if(node.getAttribute("data-level")){
+					return NodeFilter.FILTER_ACCEPT;
+				}else{
+					return NodeFilter.FILTER_SKIP;
+				}
+			},false);
+	w.currentNode=playlist.currentNode;
+	w.previousNode();
+	while(l.indexOf(w.previousNode().getAttribute("data-level"))>i){}
+	playlist.currentNode=w.currentNode;
+	playlist.previousNode();
+	skip();
+}
+function up(){
+	var l=["h1","h2","h3","h4","h5","h6","span","skip"];
+	var i=l.indexOf($("level").innerText);
 	if(i>0)i--;
+	if(l[i]=='skip'){
+		$("level").innerText=l[i];
+		return
+	}
 	while(i>0 && !TOCDISPLAY.querySelector("[data-level="+l[i]+"]") ){
 		i--;
 	}
 	$("level").innerText=l[i];
 }
 function down(){
-	var l=["h1","h2","h3","h4","h5","h6","span"];
+	var l=["h1","h2","h3","h4","h5","h6","span","skip"];
 	var i=l.indexOf($("level").innerText);
 	if(i<(l.length-1))i++;
+	if(l[i]=='skip'){
+		$("level").innerText=l[i];
+		return
+	}
 	while(i<(l.length-1) && !TOCDISPLAY.querySelector("[data-level="+l[i]+"]") ){
 		i++;
 	}
@@ -295,7 +311,7 @@ function stop(){
 	if($("state")){$("state").setAttribute("data-state","on");}
 }
 function loadText(smilList,width){
-	width=7
+	if(!width)width=10
 	var walker=document.createTreeWalker(TOCDISPLAY,
 			NodeFilter.SHOW_ELEMENT,
 			function(node){
@@ -310,10 +326,15 @@ function loadText(smilList,width){
 	walker.currentNode=playlist.currentNode;
 	var i=0;
 	var text="";
-	while(walker.previousNode() && i>-width){i--}
+	while(walker.previousNode()){
+			i--;
+			if(-width>=i){
+				break
+			}
+		}
 	for(var c=walker.currentNode;i<width;i++){
 		if(!c) break
-		if(i==1){
+		if(i==0){
 			text+="<strong>"+c.innerText+"</strong><br />";
 		}else{
 			text+="<font color='rgba(0,0,0,"+(1-1/width*Math.abs(i)).toString()+")'>"+c.innerText+"</font><br />";
