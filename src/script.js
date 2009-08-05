@@ -46,10 +46,18 @@ function loadTOC(){
 	var current = toc;
 	var levels = ["h1","h2","h3","h4","h5","h6","span"];
 	var doc = loadSyncDoc(basePath+"ncc.html");	
+	if(!doc){
+		alert("Error: the ncc.html file could not be found.");
+	}
 	//setting info field;
-	TITLE.innerText=doc.querySelector("[name='dc:title']").getAttribute("content");
-	CREATOR.innerText=doc.querySelector("[name='dc:creator']").getAttribute("content");
-	TOTALTIME.innerText=doc.querySelector("[name='ncc:totalTime']").getAttribute("content");
+	var title=doc.querySelector("[name='dc:title']");
+	if(title)TITLE.innerText=title.getAttribute("content");
+
+	var creator=doc.querySelector("[name='dc:creator']");
+	if(creator)CREATOR.innerText=creator.getAttribute("content");
+
+	var time=doc.querySelector("[name='ncc:totalTime']");
+	if(time)TOTALTIME.innerText=time.getAttribute("content");
 	var walker = document.createTreeWalker(
 			doc,
 			NodeFilter.SHOW_ELEMENT,

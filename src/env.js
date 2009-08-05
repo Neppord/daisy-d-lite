@@ -1,2 +1,2 @@
 basePath="../media/";
-version="0.2b";
+version="0.2.1b";
