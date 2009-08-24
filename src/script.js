@@ -408,9 +408,30 @@ window.addEventListener("keypress",function (e){
 			switch(String.fromCharCode(e.keyCode || e.charCode)){
 				case "l":load();break;
 				case "p":play();break;
+				case " ":switch($("state").getAttribute("data-state")){
+					case "on":play();break;
+					case "off":load();break;
+					case "playing":stop();break;
+					}break;
 				case "s":skip();break;
 				case "f":forward();break;
 				case "b":backward();break;
+			}
+		},false);
+window.addEventListener("keyup",function (e){
+			e=e || window.event;
+			if(e.altKey || e.ctrlKey || e.shiftKey){
+				return;
+			}
+			switch(e.keyCode || e.charCode){
+				case 39://right
+				forward();break;
+				case 40://down
+				down();$('level').focus();break;
+				case 38://up
+				up();$('level').focus();break;
+				case 37://left
+				backward();break;
 			}
 		},false);
 
