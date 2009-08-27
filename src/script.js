@@ -95,8 +95,9 @@ function loadTOC(){
 		img.onclick=hideSub;
 		img.style.width="15px";
 		img.style.height="15px";
-		img.open_src="Images/open.png";
-		img.closed_src="Images/closed.png";
+		var src;
+		img.open_src= src="Images/open.png";
+		img.closed_src= src="Images/closed.png";
 		img.src=img.open_src;
 		li.appendChild(img);
 		ol.setAttribute("data-level",walker.currentNode.parentNode.tagName);
@@ -242,7 +243,7 @@ function skip(){
 	AUDIOPLAYER.playbackRate=SPEED.value;
 	var id=playlist.currentNode.parentElement.previousSibling.getAttribute("data-id");
 	var file=playlist.currentNode.parentElement.previousSibling.getAttribute("data-file");
-	$('bookmark').setAttribute("href","?id="+id+"&file="+file);
+	location.hash="id="+id+"&file="+file;
 }
 function forward(){
 	if($("level").innerText=="skip"){
@@ -388,7 +389,7 @@ function loadAudio(){
 			AUDIOPLAYER.playbackRate=SPEED.value;
 }
 function loadID(file,id){	
-	$('bookmark').setAttribute("href","?id="+id+"&file="+file)
+	location.hash="id="+id+"&file="+file;
 	playlist.currentNode=TOCDISPLAY.querySelector("[data-id='"+id+"'][data-file='"+file+"']");
 	playlist.nextNode();
 	if(playlist.currentNode.getAttribute("data-type")=="text"){
