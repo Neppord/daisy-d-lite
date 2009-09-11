@@ -7,7 +7,7 @@
 		<script type="application/x-javascript" src="script.js"></script>
 		<link rel="stylesheet" type="text/css" href="UI.css" />
 	</head>
-	<body onload="loadConstants();if(location.hash){load();loadID(/file=([^&]*)/(location.hash)[1],/id=([^&]*)/(location.hash)[1])}">
+	<body  onload="loadConstants();gotoURL();">
 		<audio id="audioPlayer">
 
 		<h1 text="red">The audio Tag is not working, there for this application will not function correctly!<br /> Try using Safari or a nother browser supporting HTML5 and the mp3 standard.</h1>
@@ -22,8 +22,8 @@
 				<td rowspan=3 width="1em;" valign="top">
 					<a  onclick="togleHide('tocCell')">X</a>
 				</td>
-				<td height="300px" width="300px" id="buttons" style="background-color:white;">
-					<table width="200px">
+				<td id="buttons">
+					<table width="200px" id="keySet">
 						<tr>
 							<td>
 							</td>
@@ -70,7 +70,7 @@
 						<a href="../License.txt">License of Daisy (D)Lite</a><br />
 					</div>
 				</td>
-				<td height="50%" id="help">
+				<td id="help">
 					<div>
 					<h3>Help:</h3>
 					<p>

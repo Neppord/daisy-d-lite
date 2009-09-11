@@ -40,6 +40,12 @@ function loadSyncDoc(src){
 	ajax.send(null);
 	return ajax.responseXML || (new DOMParser()).parseFromString(ajax.responseText,"text/xml");
 }
+function gotoURL(){
+	if(location.hash){
+		load();
+		loadID(/file=([^&]*)/(location.hash)[1],/id=([^&]*)/(location.hash)[1])
+	}
+}
 function loadTOC(){
 	var toc = document.createElement("ol");
 	toc.setAttribute("data-level","base");
@@ -366,7 +372,7 @@ function loadAudio(){
 				AUDIOPLAYER.pause();
 				if(AUDIOPLAYER.readyState==4){
 					log("readyState==4");
-					AUDIOPLAYER.currentTime=Number(node.getAttribute("data-start"))*1.0047;
+					AUDIOPLAYER.currentTime=Number(node.getAttribute("data-start"));//*1.0047;
 					AUDIOPLAYER.play();
 					AUDIOPLAYER.playbackRate=SPEED.value;
 					if(AUDIOPLAYER.timeOut)clearTimeout(AUDIOPLAYER.timeOut);

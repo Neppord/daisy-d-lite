@@ -1,7 +1,15 @@
 li[data-type=text],li[data-type=audio]{
 	display:none;
 }
-td{background-color:#9999FF;}
+body{
+	//background-color:rgb(177,255,43);
+}
+td{
+	background-color:#9999FF;
+	padding:0px;
+	margin:0px;
+	border:0;
+}
 td[data-state="off"]{
 	background-image: url('Images/on.png');
 }
@@ -10,6 +18,13 @@ td[data-state="on"]{
 }
 td[data-state="playing"]{
 	background-image: url('Images/pause.png');
+}
+#keySet{
+	border-collapse:collapse;
+}
+table{
+	//border-collapse:collapse;
+	//background-color:#9999FF;
 }
 #status div,#help div{
 	margin: 0.5em;
