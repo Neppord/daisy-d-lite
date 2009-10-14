@@ -1,2 +1,3 @@
-basePath="../media/";
-version="0.3.1b";
+//basePath="../media/";
+basePath="./";
+version="0.3.2b";

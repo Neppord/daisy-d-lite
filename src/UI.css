@@ -10,6 +10,12 @@ td{
 	margin:0px;
 	border:0;
 }
+#current{
+	background-color:#5555CC;
+}
+#currentAncestor{
+	background-color:#7777DD;
+}
 td[data-state="off"]{
 	background-image: url('Images/on.png');
 }

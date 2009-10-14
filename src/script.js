@@ -4,6 +4,7 @@ if(!$){
 		return document.getElementById.apply(document,arguments)
 	}
 }
+
 if(!window.basePath)basePath="media/";//sets but dossent over write
 function loadConstants (){
 	TEXTDISPLAY=document.getElementById("textDisplay");
@@ -149,9 +150,15 @@ function loadSmil(){
 		var next=walker.nextNode();
 		var child=false;
 		next && walker.previousNode();
-		if(next && walker.currentNode.nextSibling.contains(next.parentNode)){
+		if(walker.currentNode.nextSibling.contains){
+			if(next && walker.currentNode.nextSibling.contains(next.parentNode)){
 				child=true;
-				}
+			}
+		}else{
+			if(next && walker.currentNode.nextSibling.innerHTML.indexOf(next.parentNode.innerHTML)){
+				child=true;
+			}
+		}
 		while(w.nextNode() && w.currentNode.getAttribute("id")!=walker.currentNode.getAttribute("data-id")){}
 		do{
 			if(next && w.currentNode.getAttribute("id")==next.getAttribute("data-id")){
@@ -228,7 +235,7 @@ function load(){
 function play(file,id){
 	if($("state")){$("state").setAttribute("data-state","playing");}
 	if (id==undefined && file==undefined){
-		playlist.previousNode();
+		prevPlaylist()
 		skip();
 		return;
 	}
@@ -237,12 +244,13 @@ function play(file,id){
 function skip(){
 	if(AUDIOPLAYER.timeOut)clearTimeout(AUDIOPLAYER.timeOut);
 	AUDIOPLAYER.pause();
-	playlist.nextNode();
-	if(playlist.currentNode.getAttribute("data-type")=="text"){
+	nextPlaylist();
+	while(playlist.currentNode.getAttribute("data-type")=="text"){
 		loadText();
-		playlist.nextNode();
+		nextPlaylist();
 		loadAudio();
-	}else if (playlist.currentNode.getAttribute("data-type")=="audio"){
+	}
+	if (playlist.currentNode.getAttribute("data-type")=="audio"){
 		loadAudio();
 	}
 	AUDIOPLAYER.play();
@@ -269,15 +277,21 @@ function forward(){
 			},false);
 	w.currentNode=playlist.currentNode;
 	while(l.indexOf(w.nextNode().getAttribute("data-level"))>i){}
+	setPlayList(w.currentNode);
+	if($("state") && $("state").getAttribute("data-state")=="playing"){
+		play();	
+	}
+	/*
 	playlist.currentNode=w.currentNode;
 	playlist.previousNode();
 	skip();
+	*/
 }
 function backward(){
 	if($("level").innerText=="skip"){
-		playlist.previousNode();
-		playlist.previousNode();
-		playlist.previousNode();
+		prevPlaylist();
+		prevPlaylist();
+		prevPlaylist();
 		skip();
 		return;
 	}
@@ -295,9 +309,15 @@ function backward(){
 	w.currentNode=playlist.currentNode;
 	w.previousNode();
 	while(l.indexOf(w.previousNode().getAttribute("data-level"))>i){}
+	setPlayList(w.currentNode);
+	if($("state") && $("state").getAttribute("data-state")=="playing"){
+		play();	
+	}
+	/*
 	playlist.currentNode=w.currentNode;
 	playlist.previousNode();
 	skip();
+	*/
 }
 function up(){
 	var l=["h1","h2","h3","h4","h5","h6","span","skip"];
@@ -371,7 +391,7 @@ function loadAudio(){
 			function wait(){
 				AUDIOPLAYER.pause();
 				if(AUDIOPLAYER.readyState==4){
-					log("readyState==4");
+					//log("readyState==4");
 					AUDIOPLAYER.currentTime=Number(node.getAttribute("data-start"));//*1.0047;
 					AUDIOPLAYER.play();
 					AUDIOPLAYER.playbackRate=SPEED.value;
@@ -379,7 +399,7 @@ function loadAudio(){
 					AUDIOPLAYER.timeOut=setTimeout(skip,(Number(node.getAttribute("data-stop"))-Number(node.getAttribute("data-start")))*1000/SPEED.value);
 				}
 				else{
-					log("readyState=="+AUDIOPLAYER.readyState+" i.e. not 4");
+					//log("readyState=="+AUDIOPLAYER.readyState+" i.e. not 4");
 					AUDIOPLAYER.pause();
 				}
 				AUDIOPLAYER.playbackRate=SPEED.value;
@@ -396,17 +416,63 @@ function loadAudio(){
 }
 function loadID(file,id){	
 	location.hash="id="+id+"&file="+file;
-	playlist.currentNode=TOCDISPLAY.querySelector("[data-id='"+id+"'][data-file='"+file+"']");
-	playlist.nextNode();
-	if(playlist.currentNode.getAttribute("data-type")=="text"){
+	setPlayList(TOCDISPLAY.querySelector("[data-id='"+id+"'][data-file='"+file+"']"));
+	while(playlist.currentNode.getAttribute("data-type")=="text"){
 		loadText();
-		playlist.nextNode();
-		loadAudio();
-	}else if (playlist.currentNode.getAttribute("data-type")=="audio"){
+		nextPlaylist();
+	}
+	if (playlist.currentNode.getAttribute("data-type")=="audio"){
 		loadAudio();
 	}
 	if($("state")){$("state").setAttribute("data-state","playing");}
 }
+function markCurrent(){
+	if(document.getElementsByClassName("marked").length){
+		var list=document.getElementsByClassName("marked");
+		while(list.item()!=null){
+			list.item().style.background="";
+			list.item().style.border="";
+			list.item().className=list.item().className.replace(/\s*marked\s*/," ").replace(/^\s+/,"");
+		}
+	}
+
+	var tmp=playlist.currentNode;
+	while(tmp.getAttribute("data-level")!="base"){ 
+		if(tmp.tagName.toLowerCase()=="li"){
+			tmp.style.background="rgba(255,204,153,0.3)";
+			tmp.style.border="solid rgba(204,255,153,0.5)";
+			tmp.className=(tmp.className+" marked").replace(/^\s+/,"");
+		}
+		tmp=tmp.parentElement;
+	}
+}
+
+function prevPlaylist(){
+	playlist.previousNode();
+	markCurrent();
+	return playlist.currentNode;
+}
+
+function nextPlaylist(){
+	playlist.nextNode();
+	markCurrent();
+	return playlist.currentNode;
+
+}
+
+function setPlayList(elem){
+	playlist.currentNode=elem;
+	playlist.previousNode();
+	if(playlist.currentNode!=elem){
+		playlist.nextNode();
+	}
+	markCurrent();
+	return playlist.currentNode;
+}
+
+/*
+*Event handling, should be moved to a seperate js file, mabey UI?
+*/
 window.addEventListener("keypress",function (e){
 			e=e || window.event;
 			if(e.altKey || e.ctrlKey || e.shiftKey){
