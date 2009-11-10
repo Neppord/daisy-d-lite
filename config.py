@@ -50,6 +50,10 @@ dist: build
 	cp build/index.html.link dist/index.html
 .PHONY:build
 build: build/index.html.link
+.PHONY:commit
+commit: dist
+	-rm -r build
+	git commit -a
 .PHONY:clean
 clean:
 	-rm -r build/ dist/
