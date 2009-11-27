@@ -28,30 +28,31 @@
 							<td>
 							</td>
 							<td onclick="up();">
-								<div width="100px" height="100px" id="up"></div>
+								<button width="100px" height="100px" id="up" title="up"></button>
 							</td>
 							<td></td>
 						</tr>
 						<tr>
 							<td onclick="backward();">
-								<div width="100px" height="100px"id="left"></div>
+								<button width="100px" height="100px"id="left" title="backward"></button>
 							</td>
-							<td data-state="off" id="state" onclick="
-								switch($('state').getAttribute('data-state')){
-									case 'off':load();break;
-									case 'on':play();break;
-									case 'playing':stop();break;
-									}">
-								<div width="100px" height="100px"></div>
+							<td> 
+									<button width="100px" height="100px" title="on" id="state" onclick="
+										switch($('state').getAttribute('title')){
+											case 'on':load();break;
+											case 'play':play();break;
+											case 'pause':stop();break;
+										}">
+										</button>
 							</td>
 							<td onclick="forward();">
-								<div id="right" width="100px" height="100px"></div>
+								<button id="right" width="100px" height="100px" title="forward" ></button>
 							</td>
 						</tr>
 						<tr>
 							<td></td>
 							<td onclick="down();">
-								<div id="down" width="100px" height="100px"></div>
+								<button id="down" width="100px" height="100px" title="down"></button>
 							</td>
 							<td></td>
 						</tr>

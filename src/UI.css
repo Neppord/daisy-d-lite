@@ -10,19 +10,24 @@ td{
 	margin:0px;
 	border:0;
 }
+button{
+	width:100px;
+	height:100px;
+	background-color:rgba(0,0,0,0);
+}
 #current{
 	background-color:#5555CC;
 }
 #currentAncestor{
 	background-color:#7777DD;
 }
-td[data-state="off"]{
+button[title="on"]{
 	background-image: url('Images/on.png');
 }
-td[data-state="on"]{
+button[title="play"]{
 	background-image: url('Images/play.png');
 }
-td[data-state="playing"]{
+button[title="pause"]{
 	background-image: url('Images/pause.png');
 }
 #keySet{
@@ -57,6 +62,6 @@ table{
 	height:100px;
 	width:100px;
 }
-#down:active, #up:active, #left:active, #right:active, td[data-state]:active{
+#down:active, #up:active, #left:active, #right:active, td[title]:active{
 	background-image: url('Images/Square_inverse.png');
 }

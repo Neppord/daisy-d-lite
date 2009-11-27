@@ -1,6 +1,6 @@
 %!TEX encoding = UTF-8
 
-\documentclass{report}
+\documentclass{article}
 \usepackage[swedish]{babel}
 \usepackage[utf8]{inputenc}
 
@@ -12,27 +12,44 @@
 \maketitle
 
 \begin{abstract}
-
+Daisy D Lite är en talboks spelare i HTML format.
+den är utvecklad då HTML 5 standarden änu inte var färdig och har derför mer än bara programmmets dunktioner som svårigheter.
+tanken bakom programet avr att var du än fanns skall du kunna lysna på DAISY böcker bara du har tillgång till din bok och en web läsare, och {\em Dasiy D Lite} förstås. 
+Projektet har försök utnytja likheter i de båda standarderna och använad så lite kod för att gra så mycet som möjligt.
 \end{abstract}
 
 \section{inledning}
-Idag finns det ett problem för folk som har läs ock skriv svårigheter eller synfel som gör att de  behöver en dator till sin hjälp. 
-De har inte den frihet att välja mellan de alternativ vanliga människor har så som operativsystem eller plats att arbeta på.
-En anledning till detta är dyr programvara som inte går att använda på alla plattformar och att det har blivit en standard att bara använda Windows miljö i hjälpmedelindustrin i Sverige.
-På senare år har dock fri programvara och medvetna operativsystems tillverkare byggt in mer och mer i operativsystemen.
-Både Ubuntu, Mac OS och Windows 7 har förstoring som kan hjälpa de som har lätta problem.
-En sak som fortfarande fattas är stöd för speciell media så som indexerade talböcker, så kallade DAISY böcker.
-Detta är vad detta projekt strävar efter att lösa.
-
-Att genom små ock enkla medel se till att dessa böcker blir tillgängliga.
 
 \section{Metod}
 
 \subsection{Standader och protokoll}
 
 \subsubsection{DAISY 2.02}
+DAISY 2.02 togs fram redan 2001 och är det mest använda talboks formatet hos TPB\footnote{talboks och punktskrift biblioteket}. 
+Denna standard bygger i sin tur på flera andra standarder, så som mp3, XHTML och SMIL.
+Tillsammans tillför de möjligheten att orientera sig hirarkiskt och att syncronisera inehållet och där med bildar de en talbok.
+
+\paragraph{XHTML}
+De filer som är i XHTML formatet är bland annat den obligatoriska {\em ncc} filen.
+I den filen finns meta information som bland annat vem som skrivit boken och vem som läser upp den.
+I sidans kropp finns innehållsförteckningen för boken med rubriker och under rubriker, som {\em headings} 1 till 6.
+I böcker där inte all text från orginal boken används, används oftast dessa rubriker som text till ljudet.
+{\em span} tagen används för att markera att en ny sida har på börjats.
+
+\paragraph{SMIL}
+För att syncronisera data så används smil filer.
+Dessa filler inehåller nestlade par\footnote{paralel} och seq\footnote{sequense} tagar där löven i trädet är text och audio taggar.
+Det kan också finnas ett {\em Master} smil document som inehåller{\em ref} tagar som listar alla andra smil filer i spel ordning.
+
+\paragraph{MP3}
+även om man kan använda rå ljud data som PCM i form av wav filer så används nästan uteslutande mp3 filer.
+När ljud kodas till mp3 
 
 \subsubsection{HTML 5}
+HTML 5 har vid skrivandets stund inte fast laggts änn men det finns en draft som under projecttets gång har förändrats.
+olyckligt vis har dessutom delar som varit viktiga för projectet förändrats och lätt till en försvåring av utvecklingen.
+Men utan dena draft hadde ju å andra sidan projectet inte ens kunnat påbörjas.
+nedan 
 
 \section{Diskussion}
 

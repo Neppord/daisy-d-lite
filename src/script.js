@@ -228,12 +228,12 @@ function incertText(){
 }
 function load(){
 	loadTOC();
-	if($("state")){$("state").setAttribute("data-state","on");}
+	if($("state")){$("state").setAttribute("title","on");}
 	loadSmil();
 	incertText();
 }
 function play(file,id){
-	if($("state")){$("state").setAttribute("data-state","playing");}
+	if($("state")){$("state").setAttribute("title","playing");}
 	if (id==undefined && file==undefined){
 		prevPlaylist()
 		skip();
@@ -278,7 +278,7 @@ function forward(){
 	w.currentNode=playlist.currentNode;
 	while(l.indexOf(w.nextNode().getAttribute("data-level"))>i){}
 	setPlayList(w.currentNode);
-	if($("state") && $("state").getAttribute("data-state")=="playing"){
+	if($("state") && $("state").getAttribute("title")=="playing"){
 		play();	
 	}
 	/*
@@ -310,7 +310,7 @@ function backward(){
 	w.previousNode();
 	while(l.indexOf(w.previousNode().getAttribute("data-level"))>i){}
 	setPlayList(w.currentNode);
-	if($("state") && $("state").getAttribute("data-state")=="playing"){
+	if($("state") && $("state").getAttribute("title")=="playing"){
 		play();	
 	}
 	/*
@@ -349,7 +349,7 @@ function down(){
 function stop(){
 	if(AUDIOPLAYER.timeOut)clearTimeout(AUDIOPLAYER.timeOut);
 	AUDIOPLAYER.pause();
-	if($("state")){$("state").setAttribute("data-state","on");}
+	if($("state")){$("state").setAttribute("title","on");}
 }
 function loadText(smilList,width){
 	if(!width)width=10
@@ -424,7 +424,7 @@ function loadID(file,id){
 	if (playlist.currentNode.getAttribute("data-type")=="audio"){
 		loadAudio();
 	}
-	if($("state")){$("state").setAttribute("data-state","playing");}
+	if($("state")){$("state").setAttribute("title","playing");}
 }
 function markCurrent(){
 	if(document.getElementsByClassName("marked").length){
@@ -481,10 +481,10 @@ window.addEventListener("keypress",function (e){
 			switch(String.fromCharCode(e.keyCode || e.charCode)){
 				case "l":load();break;
 				case "p":play();break;
-				case " ":switch($("state").getAttribute("data-state")){
-					case "on":play();break;
-					case "off":load();break;
-					case "playing":stop();break;
+				case " ":switch($("state").getAttribute("title")){
+					case "play":play();break;
+					case "on":load();break;
+					case "pause":stop();break;
 					}break;
 				case "s":skip();break;
 				case "f":forward();break;
