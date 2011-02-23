@@ -5,7 +5,7 @@ if(!$){
 	}
 }
 
-if(!window.basePath)basePath="media/";//sets but dossent over write
+if(!window.basePath)basePath="../media/";//sets but dossent over write
 function loadConstants (){
 	TEXTDISPLAY=document.getElementById("textDisplay");
 	TOCDISPLAY=document.getElementById("tocDisplay")
@@ -17,8 +17,28 @@ function loadConstants (){
 	TOTALTIME=$("totalTime");
 	SPEED=$('speed');
 	VOLUME=$('volume');
+	initAudioElementCallbacks();
 
 }
+
+function initAudioElementCallbacks(){
+	AUDIOPLAYER.addEventListener("timeupdate",function(){
+		var node = playlist.currentNode;
+		var end = Number(node.getAttribute("data-stop"));
+		if(Number(AUDIOPLAYER.currentTime) >= Number(end)){
+			skip();
+		}
+		//log("time:"+ AUDIOPLAYER.currentTime + " end:" + end);
+	});
+	AUDIOPLAYER.addEventListener("playing",function(){
+		var node = playlist.currentNode;
+		var start = Number(node.getAttribute("data-start"));
+		AUDIOPLAYER.currentTime = start;
+		AUDIOPLAYER.playbackRate = SPEED.value;
+
+	});
+}
+
 //functions
 
 function log(){
@@ -228,12 +248,12 @@ function incertText(){
 }
 function load(){
 	loadTOC();
-	if($("state")){$("state").setAttribute("title","on");}
+	if($("state")){$("state").setAttribute("title","play");}
 	loadSmil();
 	incertText();
 }
 function play(file,id){
-	if($("state")){$("state").setAttribute("title","playing");}
+	if($("state")){$("state").setAttribute("title","pause");}
 	if (id==undefined && file==undefined){
 		prevPlaylist()
 		skip();
@@ -278,7 +298,7 @@ function forward(){
 	w.currentNode=playlist.currentNode;
 	while(l.indexOf(w.nextNode().getAttribute("data-level"))>i){}
 	setPlayList(w.currentNode);
-	if($("state") && $("state").getAttribute("title")=="playing"){
+	if($("state") && $("state").getAttribute("title")=="pause"){
 		play();	
 	}
 	/*
@@ -310,7 +330,7 @@ function backward(){
 	w.previousNode();
 	while(l.indexOf(w.previousNode().getAttribute("data-level"))>i){}
 	setPlayList(w.currentNode);
-	if($("state") && $("state").getAttribute("title")=="playing"){
+	if($("state") && $("state").getAttribute("title")=="pause"){
 		play();	
 	}
 	/*
@@ -349,7 +369,7 @@ function down(){
 function stop(){
 	if(AUDIOPLAYER.timeOut)clearTimeout(AUDIOPLAYER.timeOut);
 	AUDIOPLAYER.pause();
-	if($("state")){$("state").setAttribute("title","on");}
+	if($("state")){$("state").setAttribute("title","play");}
 }
 function loadText(smilList,width){
 	if(!width)width=10
@@ -387,32 +407,23 @@ function loadText(smilList,width){
 }
 function loadAudio(){
 	var node=playlist.currentNode;
-			if(AUDIOPLAYER.timeOut)clearTimeout(AUDIOPLAYER.timeOut);
-			function wait(){
-				AUDIOPLAYER.pause();
-				if(AUDIOPLAYER.readyState==4){
-					//log("readyState==4");
-					AUDIOPLAYER.currentTime=Number(node.getAttribute("data-start"));//*1.0047;
-					AUDIOPLAYER.play();
-					AUDIOPLAYER.playbackRate=SPEED.value;
-					if(AUDIOPLAYER.timeOut)clearTimeout(AUDIOPLAYER.timeOut);
-					AUDIOPLAYER.timeOut=setTimeout(skip,(Number(node.getAttribute("data-stop"))-Number(node.getAttribute("data-start")))*1000/SPEED.value);
-				}
-				else{
-					//log("readyState=="+AUDIOPLAYER.readyState+" i.e. not 4");
-					AUDIOPLAYER.pause();
-				}
-				AUDIOPLAYER.playbackRate=SPEED.value;
-			}
-			AUDIOPLAYER.src=node.getAttribute("data-src")
-			AUDIOPLAYER.playbackRate=SPEED.value;
-			if(AUDIOPLAYER.src!=AUDIOPLAYER.currentSrc && AUDIOPLAYER.load)AUDIOPLAYER.load();
+	function wait(){
+		AUDIOPLAYER.pause();
+		if(AUDIOPLAYER.readyState==4){
+			AUDIOPLAYER.play();
+		}else{
 			AUDIOPLAYER.pause();
-			AUDIOPLAYER.onload=wait;
-			try{
-				wait();
-			}catch(err){}
-			AUDIOPLAYER.playbackRate=SPEED.value;
+		}
+	}
+	AUDIOPLAYER.src=node.getAttribute("data-src")
+	if(AUDIOPLAYER.src!=AUDIOPLAYER.currentSrc && AUDIOPLAYER.load){
+		AUDIOPLAYER.load();
+	}
+	AUDIOPLAYER.pause();
+	AUDIOPLAYER.onload=wait;
+	try{
+		wait();
+	}catch(err){}
 }
 function loadID(file,id){	
 	location.hash="id="+id+"&file="+file;
@@ -424,7 +435,7 @@ function loadID(file,id){
 	if (playlist.currentNode.getAttribute("data-type")=="audio"){
 		loadAudio();
 	}
-	if($("state")){$("state").setAttribute("title","playing");}
+	if($("state")){$("state").setAttribute("title","pause");}
 }
 function markCurrent(){
 	if(document.getElementsByClassName("marked").length){
